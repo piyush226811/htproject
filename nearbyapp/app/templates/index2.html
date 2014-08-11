@@ -1,0 +1,219 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <base href="/">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nearby App | HT project</title>
+    <meta name="description" content="Search nearby events and movies in your locality" />
+    <meta name="keywords" content="geolocation searc nearby events gurgaon delhi ncr movies" />
+    <meta name="author" content="Piyush" />
+    <link rel="icon" type="image/png" href="favicon.png"/>
+    <link href="{% static "css/stylesheets/b.css" %}" rel="stylesheet">
+    <link href="{% static "css/stylesheets/freecharge.css" %}" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+    <!-- Aman removed the JSP, this should save us one call to fetch the JSP  -->
+        <header class="header custom-grid" id="user-account">
+            <div class="main-head">
+                <div class="container">
+                    <a class="navbar-brand" href="/">
+                        <span class="glyphicon glyphicon-film"></span>
+                        Nearby<strong>Trackr</strong></a>
+                    </a>
+
+                    {% if login %}
+                    <ul class="user-account">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="navbarAccountBtn">{{ request.session.name }} <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                
+                                <li>
+                                    <a href="/profile">
+                                        <i class="icon-profile"></i>
+                                        <span class="user-account-text">Profile</span>
+                                    </a>
+                                </li>
+                                
+                                <li>
+                                    <a href="/myEvents">
+                                        <i class="icon-mycoupons"></i>
+                                        <span class="user-account-text">My Events</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/logout/home">
+                                        <i class="icon-logout"></i>
+                                        <span class="user-account-text">Logout</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <ul class="order-summary">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="navbarCartBtn">Notification (2) <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <div class="order-summary-content">
+                                        <ul>
+                                            
+
+                                           
+                                            <li class="order-summary-total clearfix">
+                                                <span class="type">Event1</span>
+                                                <span class="value">
+                                                    <strong>
+                                                        <span>24-Aug-2014</span>
+                                                    </strong>
+                                                </span>
+                                            </li>
+
+                                            <li class="order-summary-total clearfix">
+                                                <span class="type">Event1</span>
+                                                <span class="value">
+                                                    <strong>
+                                                        <span>24-Aug-2014</span>
+                                                    </strong>
+                                                </span>
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    {% else %}
+                    <ul class="login">
+                        <li>
+                            <a class="btn-sign-in sign-in" href="/login/fb" id="navbarLoginBtn">Login</a>
+                        </li>
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </header>
+    
+    <!-- The content of the page goes here -->
+        <section class="content-body custom-grid" id="main"><div class="page custom-grid page-slide-up">
+            <div class="fixed-nav coupon-page-header affix-top" id="fixed-nav">
+                <div class="container">
+                    <div class="coupon-page-header-text">
+                        <h3>Your location is identified</h3>
+                            <p>Please give the access</p>
+                    </div>
+                    <div class="coupon-page-header-button">
+                        <button id="couponContinue" class="btn btn-primary">Get Location<span class="three-quarters"></span></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container coupon-block">
+
+                <div class="row">
+                    <div class="sidebar">
+
+                        <div class="filter-category">
+                            <h5><i class="icon-coupon-category-All effect-icon"></i><span>Categories</span><a href="javascript:void(0)" class="select-all">Select All</a></h5>
+                            <ul>
+                                <li class="checkbox">
+                                    <label>
+                                        <input name="Food" value="Food" checked="" data-category-detail="" data-category-name="Food" data-category-id="1" type="checkbox">Food Festival
+
+                                    </label>
+                                </li>
+                                <li class="checkbox">
+                                    <label>
+                                        <input name="Entertainment" value="Entertainment" checked="" data-category-detail="" data-category-name="Entertainment" data-category-id="12" type="checkbox">Entertainment
+
+                                    </label>
+                                </li>
+                                <li class="checkbox">
+                                    <label>
+                                        <input name="Store" value="Store" checked="" data-category-detail="" data-category-name="Store" data-category-id="2" type="checkbox">Music Concert
+
+                                    </label>
+                                </li>
+                                <li class="checkbox">
+                                    <label>
+                                        <input name="Care" value="Care" checked="" data-category-detail="" data-category-name="Care" data-category-id="4" type="checkbox">Business
+
+                                    </label>
+                                </li>
+                                <li class="checkbox">
+                                    <label>
+                                        <input name="Travel" value="Travel" checked="" data-category-detail="" data-category-name="Travel" data-category-id="8" type="checkbox">IT
+
+                                    </label>
+                                </li>
+                                <li class="checkbox">
+                                    <label>
+                                        <input name="Miscellaneous" value="Miscellaneous" checked="" data-category-detail="" data-category-name="Miscellaneous" data-category-id="11" type="checkbox">Miscellaneous
+
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="coupons">
+                        {% for event in events %}
+                        <div class="coupon">
+                            <a href="/events/{{event.id}}">
+
+                            <div class="image">
+                                <img src="" width="200" height="135">
+                            </div>
+                        </a>
+                            <a class="btn btn-special coupon-pick-button btn-secondary" data-coupon-amount="25" data-coupon-id="986" data-coupon-image-url="https://d1vq4cm585jne1.cloudfront.net//content/images/sw/merchant_icon/fkcmission.png" data-coupon-price="0">DETAILS</a>
+
+                            <p class="description">{{event.title}} </p>
+                            <div class="details">
+                            </div>
+                            <div class="info clearfix">
+                                <div class="left">
+                                    <span class="save-text">CITY</span>
+                                    <p class="price">{{event.city}}</p>
+                                </div>
+                                <div class="right">
+                                    <p class="expiry"><span>Date</span> {{event.event_date}}</p>
+                                </div>
+                            </div>
+                        
+                        </div>
+                        {% endfor %}
+                        
+                        
+                    </div>
+                </div>
+            </div>
+
+    
+            <!-- The footer section -->
+            <footer class="footer custom-grid">
+                <div class="footer-one">
+                    <p class="copyright" id="so">© 2014, HT Project.</p>
+                </div>
+            </footer>
+
+        </div>
+    </section>
+
+<script type="text/javascript" src="https://d2s1ih2yipot4l.cloudfront.net/content/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="https://d2s1ih2yipot4l.cloudfront.net/content/js/singlepage/lib/bootstrap.3.0.3.min.js"></script>
+
+
+
+
+</body>
+</html>

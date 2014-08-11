@@ -1,0 +1,86 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <base href="/">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nearby App | HT project</title>
+    <meta name="description" content="Search nearby events and movies in your locality" />
+    <meta name="keywords" content="geolocation searc nearby events gurgaon delhi ncr movies" />
+    <meta name="author" content="Piyush" />
+    <link rel="icon" type="image/png" href="favicon.png"/>
+    <link href="{% static "css/stylesheets/style.css" %}" rel="stylesheet">
+
+</head>
+<body>
+<div ng-controller="NavbarCtrl" class="navbar navbar-default navbar-static-top" role="navigation" bs-navbar>
+    <div class="navbar-header">
+        <a class="navbar-brand" href="/">
+            <span class="glyphicon glyphicon-film"></span>
+            Nearby<strong>Trackr</strong></a>
+    </div>
+    <ul class="nav navbar-nav">
+        <li data-match-route="/$"><a href="/">Home</a></li>
+    </ul>
+    {% if login %}
+    <ul class="nav navbar-nav pull-right">
+        <li class="navbar-text">{{ request.session.name }}</li>
+        <li data-match-route="/logout/"><a href="/logout/home">Logout</a></li>
+    </ul>
+    {% else %}
+    <ul class="nav navbar-nav pull-right">
+        <li data-match-route="/login/fb"><a href="/login/fb">Login</a></li>
+    </ul>
+    {% endif %}
+</div>
+
+<div>
+<div class="jumbotron">
+  <div class="container">
+    <ul class="alphabet">
+      <li ng-repeat="char in alphabet">
+        
+      </li>
+    </ul>
+    <ul class="genres">
+      <li ng-repeat="genre in genres">
+        
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="container">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+        Events
+        <div class="pull-right">
+            <input class="search" type="text" ng-model="query" placeholder="Search...">
+        </div>
+    </div>
+    <div class="panel-body">
+      <div class="row show-list">
+        {% for event in events %}
+        <div class="col-xs-4 col-md-3">
+            <a href="/events/{{event.id}}">
+                <img class="img-rounded" src="{{event.image}}" width="100%"/>
+            </a>
+            <div class="text-center">
+                <a href="/events/{{event.id}}">{{event.title}}</a>
+                <p class="text-muted">Date: {{event.event_date}}</p>
+            </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!--<script src="app.min.js"></script>-->
+<!--<script src="templates.js"></script>-->
+</body>
+</html>

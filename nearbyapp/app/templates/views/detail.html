@@ -1,0 +1,188 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <base href="/">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nearby App | HT project</title>
+    <meta name="description" content="Search nearby events and movies in your locality" />
+    <meta name="keywords" content="geolocation searc nearby events gurgaon delhi ncr movies" />
+    <meta name="author" content="Piyush" />
+    <link rel="icon" type="image/png" href="favicon.png"/>
+    <link href="{% static "css/stylesheets/style.css" %}" rel="stylesheet">
+    <script>
+    var csrf_token = '{{ c.csrf_token }}';
+    </script>
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-static-top" role="navigation" bs-navbar>
+    <div class="navbar-header">
+        <a class="navbar-brand" href="/">
+            <span class="glyphicon glyphicon-film"></span>
+            Nearby<strong>Trackr</strong></a>
+    </div>
+    <ul class="nav navbar-nav">
+        <li data-match-route="/$"><a href="/">Home</a></li>
+    </ul>
+    {% if login %}
+    <ul class="nav navbar-nav pull-right">
+        <li class="navbar-text">{{ request.session.name }}</li>
+        <li data-match-route="/logout/"><a href="/logout/{{ event.id}}">Logout</a></li>
+    </ul>
+    {% else %}
+    <ul class="nav navbar-nav pull-right">
+        <li data-match-route="/login/fb"><a href="/login/fb">Login</a></li>
+    </ul>
+    {% endif %}
+</div>
+
+<div>
+<div class="jumbotron">
+  <div class="container">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="media">
+        <div class="pull-left">
+          <img class="media-object img-rounded" src="{{event.image}}">
+          {% if login %}
+          <div class="text-center">
+            
+            <div id="unsub" {% if bookmark_check %} {% else %} style="display:none" {% endif %}>
+              <button onclick="unsubscribe()" class="btn btn-block btn-danger">
+                <span class="glyphicon glyphicon-plus"></span> Unsubscribe
+              </button>
+            </div>
+            
+            <div id="sub" {% if bookmark_check %} style="display:none" {% endif %}>
+              <button onclick="subscribe()" class="btn btn-block btn-success">
+                <span class="glyphicon glyphicon-minus"></span> Subscribe
+              </button>
+            </div>
+          </div>
+          {% else %}
+          <div class="text-center">
+            <a class="btn btn-block btn-primary" href="/login/fb">Login to Bookmark</a>
+          </div>
+        </div>
+        {% endif %}
+        <div class="media-body">
+          <h2 class="media-heading">
+            {{event.title}}
+            <span class="pull-right text-danger">{{event.event_date}}</span>
+          </h2>
+          <p>{{event.description}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <span class="glyphicon glyphicon-play"></span> Other Details
+    </div>
+    <div class="panel-body">
+      <div class="episode">
+        <h4>{{event.organizer}}
+        <small>{{event.venue}} , {{event.city}}</small>
+        </h4>
+        <p>
+          <span class="glyphicon glyphicon-calendar"></span>
+          
+        </p>
+        <p>{{event.event_date}} , {{event.event_time}}</p>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <span class="glyphicon glyphicon-play"></span> Friends
+    </div>
+    <div class="panel-body">
+        {% for bookmark in bookmarks %}
+      <div class="episode">
+        <h4>{{bookmark.user.name}}
+        <small>{{bookmark.user.fbid}}</small>
+        </h4>
+        
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+
+
+
+function unsubscribe()
+{
+
+  
+
+var xmlhttp;
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {    
+     document.getElementById("unsub").style.display = 'none';
+  document.getElementById("sub").style.display = 'block';
+   }
+  }
+
+
+xmlhttp.open("POST","http://458cebc.ngrok.com/bookmarks/unset/{{request.session.fbid}}/{{ event.id }}/",true);
+xmlhttp.setRequestHeader("X-CSRFToken", csrf_token);
+xmlhttp.send();
+}
+
+
+
+function subscribe()
+{
+  
+
+var xmlhttp;
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+      document.getElementById("sub").style.display = 'none';
+  document.getElementById("unsub").style.display = 'block';
+    }
+  }
+
+
+xmlhttp.open("POST","http://458cebc.ngrok.com/bookmarks/set/{{ request.session.fbid }}/{{ event.id }}/",true);
+xmlhttp.setRequestHeader("X-CSRFToken", csrf_token);
+xmlhttp.send();
+}
+
+</script>
+
+<!--<script src="app.min.js"></script>-->
+<!--<script src="templates.js"></script>-->
+</body>
+</html>

@@ -1,0 +1,5 @@
+{{ object.title }}
+{{ object.description }}
+{{ object.organizer }}
+{{ object.venue }}
+{{ object.category }}

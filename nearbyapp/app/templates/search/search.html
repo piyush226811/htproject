@@ -1,0 +1,93 @@
+{% block content %}
+<div class="span12">
+    <h1>Search</h1>
+    <form method="get" action="." class=".form-search">
+        <table>
+            {{ form.as_table }}
+        </table>
+        <input type="submit" value="Search">
+    </form>
+</div>
+
+{% if query %}
+<div class="span2">
+    <h3>Filter</h3>
+    {% if facets.fields.category %}
+    <div>
+        <h4>Category</h4>
+        <ul>
+        {% for category in facets.fields.category %}
+            <li><a href="{{ request.get_full_path }}&amp;selected_facets=category_exact:{{ category.0|urlencode }}">{{ category.0 }}</a> ({{ category.1 }})</li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    {% if facets.fields.event_date %}
+    <div>
+        <h4>Location</h4>
+        <ul>
+        {% for event_date in facets.fields.event_date %}
+            <li><a href="{{ request.get_full_path }}&amp;selected_facets=event_date_exact:{{ event_date.0|urlencode }}">{{ event_date.0 }}</a> ({{ event_date.1 }})</li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</div>
+
+<div class="span6">
+    <h3>Results</h3>
+    <div class="accordion" id="accordion2">
+        {% for result in page.object_list %}
+            {% load more_like_this %}
+                {% with obj=result.object %}
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a href="http://127.0.0.1:8000/events/{{ obj.id }}">
+                    {{ obj.title }}
+                </a>
+                <div style="padding: 8px 15px;">
+                    <p>Venue: {{ obj.venue }}</p>
+                    <p>Category: {{ obj.category }}</p>
+                </div>
+            </div>
+            <div>
+            
+                <div class="accordion-inner">
+                    <p>Contact: <a href="mailto:{{ obj.get_contact_email }}">{{ obj.vendor }}</a></p>
+                    {{ obj.description }}
+                    
+                    {% more_like_this obj as related_content limit 5  %}
+                    {% if related_content %}
+                    <div>
+                        <br>
+                        <p><strong>Related:</strong></p>
+                        <ul>
+                            {% for related in related_content %}
+                                <li><a>{{ related.object.title }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+                {% endwith %}
+            {% empty %}
+        <p>No results found.</p>
+        {% endfor %}
+    </div>
+ 
+        {% if page.has_previous or page.has_next %}
+    <div>
+        {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
+                        |
+        {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
+    </div>
+        {% endif %}
+</div>
+    {% else %}
+<div class="span6">
+    {# Show some example queries to run, maybe query syntax, something else? #}
+</div>
+    {% endif %}
+{% endblock %}

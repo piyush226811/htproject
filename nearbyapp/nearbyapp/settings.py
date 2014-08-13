@@ -66,10 +66,10 @@ WSGI_APPLICATION = 'nearbyapp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'htproject',               
-        'USER': 'root',  
+        'NAME': 'htproject',
+        'USER': 'root',
         'PASSWORD': 'root',
-        'HOST': '127.0.0.1', 
+        'HOST': '127.0.0.1',
         'PORT': '3306',
     }
 }
@@ -99,6 +99,9 @@ STATICFILES_DIRS = (
 
 CRON_CLASSES = [
     "app.cron.MyCronJob",
+    "app.api_eventbrite.EventbriteApi",
+    "app.api_eventful.EventfulApi",
+    "app.api_meetup.MeetupApi",
 ]
 
 HAYSTACK_CONNECTIONS = {

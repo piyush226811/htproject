@@ -19,8 +19,15 @@ bookmark_urls = patterns('',
     url(r'^$', BookmarkList.as_view(), name='bookmark-list')
 )
 
+movie_urls = patterns('',
+    #url(r'^/(?P<pk>\d+)/bookmarks$', EventBookmarkList.as_view(), name='events-bookmark'),
+    #url(r'^/(?P<pk>\d+)$', EventDetail.as_view(), name='event-detail'),
+    url(r'^$', MovieList.as_view(), name='movie-list')
+)
+
 urlpatterns = patterns('',
     url(r'^users', include(user_urls)),
     url(r'^events', include(event_urls)),
     url(r'^bookmarks', include(bookmark_urls)),
+    url(r'^movies', include(movie_urls)),
 )

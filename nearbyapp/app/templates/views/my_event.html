@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Nearby App | HT project</title>
+    <title>My Events | Nearby App | HT project</title>
     <meta name="description" content="Search nearby events and movies in your locality" />
     <meta name="keywords" content="geolocation search nearby events gurgaon delhi ncr movies" />
     <meta name="author" content="Piyush" />
@@ -96,49 +96,37 @@
             <div class="container coupon-block">
 
                 <div class="row">
-                    <div class="sidebar">
 
-                        <div class="filter-category">
-                            <h5><i class="icon-coupon-category-All effect-icon"></i><span>Categories</span><a href="javascript:void(0)" class="select-all">Select All</a></h5>
-                            <ul>
-                                {% for category in categories %}
-                                <li class="checkbox">
-                                    <label>
-                                        <input name="Food" value="Food" checked="" data-category-detail="" data-category-name="Food" data-category-id="1" type="checkbox">{{category.category}}
-
-                                    </label>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="coupons">
-                        {% for event in events %}
+                    <div class="coupons" style="margin-left: 0px;">
+                        {% if bookmark %}
+                        {% for bookmark in bookmarks %}
                         <div class="coupon">
-                            <a href="/events/{{event.id}}">
+                            <a href="/events/{{bookmark.event_id}}">
 
                             <div class="image">
-                                <img src="{% if event.image == None or event.image == 'None' or event.image == 'none' %}http://cdn.panasonic.com/images/imageNotFound400.jpg{% else %}{{event.image}}{% endif %}" width="200" height="135">
+                                <img src="http://1.bp.blogspot.com/_VAvYqcucs3w/TI5-NKMkcSI/AAAAAAAAAMI/PZDqz7gAP28/s1600/my%2Bevent%2Bsmall.jpg" width="200" height="135">
                             </div>
                         </a>
-                            <a class="btn btn-special coupon-pick-button btn-secondary" href="/events/{{event.id}}" >DETAILS</a>
+                            <a class="btn btn-special coupon-pick-button btn-secondary" href="/events/{{bookmark.event_id}}" >DETAILS</a>
 
-                            <p class="description">{{event.title}} </p>
+                            <p class="description">{{bookmark.event_name}} </p>
                             <div class="details">
                             </div>
                             <div class="info clearfix">
                                 <div class="left">
-                                    <span class="save-text">CITY</span>
-                                    <p class="price">{{event.city}}</p>
+                                    <span class="save-text">Date</span>
+                                    <p class="price">{{bookmark.date}}</p>
                                 </div>
                                 <div class="right">
-                                    <p class="expiry"><span>Date</span> {{event.event_date}}</p>
+                                    <p class="expiry"><span>Time</span> {{bookmark.time}}</p>
                                 </div>
                             </div>
 
                         </div>
                         {% endfor %}
+                        {% else %}
+                        <h2>No Bookmark Exists!</h2>
+                        {% endif %}
 
 
                     </div>

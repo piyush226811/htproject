@@ -43,11 +43,11 @@ for e in events['results']:
 	event.organizer = e['group']['name']
 
 	if e.get('description'):
-		
+
 		event.description = remove_html_markup(e['description'])
 	else:
-		event.description = 'none'
-	
+		event.description = 'None'
+
 	if e.get('venue'):
 		event.venue = e['venue']['name'] + e['venue']['address_1']
 	else:
@@ -55,7 +55,7 @@ for e in events['results']:
 
 	event.category = e['group']['who']
 
-	
+
 	if e.get('venue'):
 		event.city = e['venue']['city']
 	else:
@@ -63,7 +63,7 @@ for e in events['results']:
 
 	event.latitude = e['group']['group_lat']
 	event.longitude = e['group']['group_lon']
-	event.api_vendor = 'meetup'
+	event.api_vendor = 'Meetup'
 	event.event_url = e['event_url']
 	event.event_date = str(time.strftime('%Y-%m-%d',  time.gmtime(e['time']/1000)))
 	event.event_time = str(time.strftime('%H:%M:%S',  time.gmtime(e['time']/1000)))

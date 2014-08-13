@@ -32,10 +32,10 @@ events = api.call('/event_search', city='Delhi')
 
 for e in events['events']:
 	#pdb.set_trace()
-	if(e.get("summary")):		
+	if(e.get("summary")):
 		print "ok"
-	else:	
-		#print e["event"]["locale"]		
+	else:
+		#print e["event"]["locale"]
 		(event, created) = Event.objects.get_or_create(eventid=e["event"]['id'])
 		if not created: continue
 
@@ -49,16 +49,16 @@ for e in events['events']:
 		if e["event"].get('category'):
 			event.category = e["event"]["category"]
 		else:
-			event.category = 'none'
+			event.category = 'None'
 		if e["event"].get('logo'):
 			event.image = e["event"]['logo']
 		else:
-			event.image = 'none'
-		
+			event.image = 'None'
+
 		event.latitude = e["event"]["venue"]['latitude']
 		event.longitude = e["event"]["venue"]['longitude']
 		event.city = e["event"]["venue"]['city']
-		event.api_vendor = 'Eventful Brite'
+		event.api_vendor = 'Eventbrite'
 		event.event_url = e["event"]["organizer"]["url"]
 
 		datetime = e["event"]['start_date'].split(' ')

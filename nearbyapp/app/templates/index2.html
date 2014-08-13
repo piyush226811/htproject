@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Nearby App | HT project</title>
     <meta name="description" content="Search nearby events and movies in your locality" />
-    <meta name="keywords" content="geolocation searc nearby events gurgaon delhi ncr movies" />
+    <meta name="keywords" content="geolocation search nearby events gurgaon delhi ncr movies" />
     <meta name="author" content="Piyush" />
     <link rel="icon" type="image/png" href="favicon.png"/>
     <link href="{% static "css/stylesheets/b.css" %}" rel="stylesheet">
@@ -19,9 +19,101 @@
 
 <body>
 
+<style>
+.body{
+background: #F9F9F9;
+}
+h1{
+text-align:center;
+top:30px;
+position: relative;
+font-size: 36px;
+line-height: 40px;
+margin: 0;
+position: relative;
+font-weight: 300;
+color: #C91622;
+padding: 5px 0px;
+text-shadow: 1px 1px 0px #F2F2F2, 1px 2px 0px #B1B1B2;
+font-family: 'KenyanCoffeeRg-Regular';
+height:70px;
+}
+
+.btn_back{
+font-size: 23px;
+white-space: nowrap;
+text-align: center;
+width: 180px;
+margin: 0 0 25px 0px;
+line-height: 20px;
+display: inline-block;
+text-decoration: none;
+padding: 12px 10px;
+border: 1px solid #DEDEDE;
+-webkit-border-radius: 3px;
+-moz-border-radius: 3px;
+border-radius: 3px 3px 3px 3px;
+cursor: pointer;
+background: #C91622;
+background: -moz-linear-gradient(top,
+#C91622 0%,
+#E24751 100%);
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,
+#C91622), color-stop(100%,
+#E24751));
+background: -webkit-linear-gradient(top,
+#C91622 0%,
+#E24751 100%);
+background: -o-linear-gradient(top,
+#C91622 0%,
+#E24751 100%);
+background: -ms-linear-gradient(top,
+#C91622 0%,
+#E24751 100%);
+background: linear-gradient(top,
+#C91622 0%,
+#E24751 100%);
+border-color: #AC0813 #AC0813 #AC0813;
+color: white;
+position: relative;
+text-shadow: 0 1px 0
+#1D4A5F;
+-webkit-box-shadow: 0 1px 1px lightGrey, inset 0 1px 0 #78AFCE;
+-moz-box-shadow: 0 1px 1px #d3d3d3, inset 0 1px 0 #78afce;
+box-shadow: 0 1px 1px lightGrey, inset 0 1px 0 #78AFCE;
+height:20px;
+}
+.container{
+    display:table;
+    width:50%;
+    border-collapse: collapse;
+    margin: 0 auto;
+
+   table-layout: fixed;
+    }
+ .heading{
+     font-weight: bold;
+     display:table-row;
+     background-color:#C91622;
+     text-align: center;
+     line-height: 25px;
+     font-size: 14px;
+     font-family:georgia;
+     color:#fff;
+
+ }
+ .table-row{
+     display:table-row;
+     text-align: center;
+ }
+ .col{
+    display:table-cell;
+    border: 1px solid #CCC;
+ }
+</style>
+
     <div class="wrapper">
 
-    <!-- Aman removed the JSP, this should save us one call to fetch the JSP  -->
         <header class="header custom-grid" id="user-account">
             <div class="main-head">
                 <div class="container">
@@ -35,22 +127,22 @@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="navbarAccountBtn">{{ request.session.name }} <b class="caret"></b></a>
                             <ul class="dropdown-menu">
-                                
+
                                 <li>
                                     <a href="/profile">
                                         <i class="icon-profile"></i>
                                         <span class="user-account-text">Profile</span>
                                     </a>
                                 </li>
-                                
+
                                 <li>
-                                    <a href="/myEvents">
+                                    <a href="/bookmarks/{{ request.session.fbid }}">
                                         <i class="icon-mycoupons"></i>
                                         <span class="user-account-text">My Events</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/logout/home">
+                                    <a href="/logout/movies">
                                         <i class="icon-logout"></i>
                                         <span class="user-account-text">Logout</span>
                                     </a>
@@ -59,40 +151,6 @@
                         </li>
                     </ul>
 
-                    <ul class="order-summary">
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="navbarCartBtn">Notification (2) <b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <div class="order-summary-content">
-                                        <ul>
-                                            
-
-                                           
-                                            <li class="order-summary-total clearfix">
-                                                <span class="type">Event1</span>
-                                                <span class="value">
-                                                    <strong>
-                                                        <span>24-Aug-2014</span>
-                                                    </strong>
-                                                </span>
-                                            </li>
-
-                                            <li class="order-summary-total clearfix">
-                                                <span class="type">Event1</span>
-                                                <span class="value">
-                                                    <strong>
-                                                        <span>24-Aug-2014</span>
-                                                    </strong>
-                                                </span>
-                                            </li>
-
-                                        </ul>
-                                    </div>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
                     {% else %}
                     <ul class="login">
                         <li>
@@ -100,10 +158,20 @@
                         </li>
                     </ul>
                     {% endif %}
+
+                    <ul class="main head">
+                        <li style="list-style: none">
+                            <a class="navbar-brand" href="/" id="navbarLoginBtn">Events</a>
+                        </li>
+                        <li style="list-style: none">
+                            <a style="color:#ffe939;background-color:#333;" class="navbar-brand" href="/movies" id="navbarLoginBtn">Movies</a>
+                        </li>
+                    </ul>
+
                 </div>
             </div>
         </header>
-    
+
     <!-- The content of the page goes here -->
         <section class="content-body custom-grid" id="main"><div class="page custom-grid page-slide-up">
             <div class="fixed-nav coupon-page-header affix-top" id="fixed-nav">
@@ -121,84 +189,71 @@
             <div class="container coupon-block">
 
                 <div class="row">
-                    <div class="sidebar">
 
-                        <div class="filter-category">
-                            <h5><i class="icon-coupon-category-All effect-icon"></i><span>Categories</span><a href="javascript:void(0)" class="select-all">Select All</a></h5>
-                            <ul>
-                                <li class="checkbox">
-                                    <label>
-                                        <input name="Food" value="Food" checked="" data-category-detail="" data-category-name="Food" data-category-id="1" type="checkbox">Food Festival
+                    <div class="coupons" style="margin-left: 0px;">
 
-                                    </label>
-                                </li>
-                                <li class="checkbox">
-                                    <label>
-                                        <input name="Entertainment" value="Entertainment" checked="" data-category-detail="" data-category-name="Entertainment" data-category-id="12" type="checkbox">Entertainment
+                        <div class="panel-heading" style="font-size:20px;">
+        Movies
 
-                                    </label>
-                                </li>
-                                <li class="checkbox">
-                                    <label>
-                                        <input name="Store" value="Store" checked="" data-category-detail="" data-category-name="Store" data-category-id="2" type="checkbox">Music Concert
+    </div>
+    <div class="order by" style="padding:10px; padding-top:25px;">
 
-                                    </label>
-                                </li>
-                                <li class="checkbox">
-                                    <label>
-                                        <input name="Care" value="Care" checked="" data-category-detail="" data-category-name="Care" data-category-id="4" type="checkbox">Business
+            <span >Select theater :
+        <select name="theater" id="theater" >
+            <option value="default">SELECT THEATER</option>
+          {% for th in theaters %}
+            <option value="/api/movies?format=json&theater={{th.theater}}">{{th.theater}}</option>
+          {% endfor %}
+         </select>
+         </span>
 
-                                    </label>
-                                </li>
-                                <li class="checkbox">
-                                    <label>
-                                        <input name="Travel" value="Travel" checked="" data-category-detail="" data-category-name="Travel" data-category-id="8" type="checkbox">IT
 
-                                    </label>
-                                </li>
-                                <li class="checkbox">
-                                    <label>
-                                        <input name="Miscellaneous" value="Miscellaneous" checked="" data-category-detail="" data-category-name="Miscellaneous" data-category-id="11" type="checkbox">Miscellaneous
+         <span style="float:right;">  Select movie :
+         <select name="movie" id="movie" >
+            <option value="default">SELECT MOVIE</option>
+          {% for mo in movietitle %}
+            <option value="/api/movies?format=json&title={{mo.title}}">{{mo.title}}</option>
+          {% endfor %}
+         </select>
+         </span>
 
-                                    </label>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+    </div>
+    <div class="panel-body">
+      <div class="row show-list">
+        <div class="container" id="movie_listing">
+            <div class="heading">
+                <div class="col">Theater</div>
+                <div class="col">Movie</div>
+                <div class="col">Gener</div>
+                <div class="col">venue</div>
+                <div class="col">city</div>
+                <div class="col">Date</div>
+                <div class="col">timing</div>
+            </div>
+        {% for movie in movies %}
 
-                    <div class="coupons">
-                        {% for event in events %}
-                        <div class="coupon">
-                            <a href="/events/{{event.id}}">
+            <div class="table-row">
+                 <div class="col">{{movie.theater}}</div>
+                 <div class="col">{{movie.title}}</div>
+                 <div class="col">{{movie.category}}</div>
+                <div class="col">{{movie.venue}}</div>
+                 <div class="col">{{movie.city}}</div>
+                 <div class="col">{{movie.date}}</div>
+                 <div class="col">{{movie.timing}}</div>
+           </div>
 
-                            <div class="image">
-                                <img src="" width="200" height="135">
-                            </div>
-                        </a>
-                            <a class="btn btn-special coupon-pick-button btn-secondary" data-coupon-amount="25" data-coupon-id="986" data-coupon-image-url="https://d1vq4cm585jne1.cloudfront.net//content/images/sw/merchant_icon/fkcmission.png" data-coupon-price="0">DETAILS</a>
 
-                            <p class="description">{{event.title}} </p>
-                            <div class="details">
-                            </div>
-                            <div class="info clearfix">
-                                <div class="left">
-                                    <span class="save-text">CITY</span>
-                                    <p class="price">{{event.city}}</p>
-                                </div>
-                                <div class="right">
-                                    <p class="expiry"><span>Date</span> {{event.event_date}}</p>
-                                </div>
-                            </div>
-                        
-                        </div>
-                        {% endfor %}
-                        
-                        
+
+        {% endfor %}
+        </div>
+      </div>
+    </div>
+
                     </div>
                 </div>
             </div>
 
-    
+
             <!-- The footer section -->
             <footer class="footer custom-grid">
                 <div class="footer-one">
@@ -212,6 +267,184 @@
 <script type="text/javascript" src="https://d2s1ih2yipot4l.cloudfront.net/content/js/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="https://d2s1ih2yipot4l.cloudfront.net/content/js/singlepage/lib/bootstrap.3.0.3.min.js"></script>
 
+<script type="text/javascript">
+ var urlmenu = document.getElementById( 'movie' );
+ urlmenu.onchange = function() {
+
+    //document.getElementById("theater").getElementsByTagName('option')[0].selected ='selected';
+    document.getElementById("theater").value ='default';
+
+    url = this.options[ this.selectedIndex ].value ;
+    var xmlhttp;
+    if (window.XMLHttpRequest)
+    {// code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp=new XMLHttpRequest();
+    }
+    else
+    {// code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200)
+        {
+            jsonResponse = xmlhttp.responseText;
+            //alert(jsonResponse)
+            json = JSON.parse(jsonResponse);
+
+            var objJSON = eval("(function(){return " + jsonResponse + ";})()");
+
+            //alert(json)
+            //alert(objJSON)
+
+            var child = document.getElementsByClassName("table-row");
+            var parent = document.getElementById("movie_listing");
+
+            //var parent = child.parentNode;
+            //alert(parent.className);
+
+            var header;
+            while (parent.firstChild) {
+
+              parent.removeChild(parent.firstChild);
+
+            }
+
+
+            var node = document.createElement("div");
+            node.setAttribute("class","heading");
+
+            var head = ['Theater','Genre','Venue  ','City','Date','Timing']
+
+            for(var i=0; i<6;i++){
+                td = document.createElement("div");
+                td.setAttribute("class","col");
+                td.innerHTML = head[i]
+                node.appendChild(td);
+
+            }
+
+            parent.appendChild(node);
+
+
+
+            var node,td;
+
+            for(key in objJSON){
+
+              node = document.createElement("div");
+              node.setAttribute("class","table-row");
+
+              for(k in objJSON[key]){
+                  //console.log(k)
+
+                  if(k=="title")continue;
+                  td = document.createElement("div");
+                  td.setAttribute("class","col");
+                  td.innerHTML = objJSON[key][k]
+                  node.appendChild(td);
+
+                }
+
+                parent.appendChild(node);
+
+            }
+
+        }
+    }
+    xmlhttp.open("GET",url,true);
+    xmlhttp.send();
+
+ };
+
+
+ var urlmenu = document.getElementById( 'theater' );
+ urlmenu.onchange = function() {
+
+    document.getElementById("movie").value ='default';
+
+    url = this.options[ this.selectedIndex ].value ;
+    var xmlhttp;
+    if (window.XMLHttpRequest)
+    {// code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp=new XMLHttpRequest();
+    }
+    else
+    {// code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200)
+        {
+            jsonResponse = xmlhttp.responseText;
+            //alert(jsonResponse)
+            json = JSON.parse(jsonResponse);
+
+            var objJSON = eval("(function(){return " + jsonResponse + ";})()");
+
+            //alert(json)
+            //alert(objJSON)
+
+            var child = document.getElementsByClassName("table-row");
+            var parent = document.getElementById("movie_listing");
+
+            //var parent = child.parentNode;
+            //alert(parent.className);
+
+            var header;
+            while (parent.firstChild) {
+
+              parent.removeChild(parent.firstChild);
+
+            }
+
+
+            var node = document.createElement("div");
+            node.setAttribute("class","heading");
+
+            var head = ['Movie','Genre','Venue  ','City','Date','Timing']
+
+            for(var i=0; i<6;i++){
+                td = document.createElement("div");
+                td.setAttribute("class","col");
+                td.innerHTML = head[i]
+                node.appendChild(td);
+
+            }
+
+            parent.appendChild(node);
+
+
+
+            var node,td;
+
+            for(key in objJSON){
+
+              node = document.createElement("div");
+              node.setAttribute("class","table-row");
+
+              for(k in objJSON[key]){
+                  //console.log(k)
+                  if(k=="theater")continue;
+                  td = document.createElement("div");
+                  td.setAttribute("class","col");
+                  td.innerHTML = objJSON[key][k]
+                  node.appendChild(td);
+
+                }
+
+                parent.appendChild(node);
+
+            }
+
+        }
+    }
+    xmlhttp.open("GET",url,true);
+    xmlhttp.send();
+
+ };
+</script>
 
 
 

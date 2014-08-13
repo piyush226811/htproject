@@ -370,7 +370,7 @@ isotope,
 .header .order-summary {
   float: right;
   margin: 0 0 0 40px;
-  padding: 0;
+  padding: 0px 10px 10px 10px;
   font-size: 13px;
   list-style: none;
 }
@@ -2679,7 +2679,7 @@ isotope,
   color: #919BAC;
   padding-bottom: 10px;
   border-bottom: 1px solid #EAEDEF;
-  text-transform: capitalize; 
+  text-transform: capitalize;
 }
 
 .final-page hr {
@@ -2712,7 +2712,7 @@ isotope,
   margin-bottom: 20px;
 }
 
-.final-page .recharge-summary, 
+.final-page .recharge-summary,
 .final-page .faq {
   padding: 20px;
   border: 1px solid #EAEDEF;
@@ -3172,14 +3172,14 @@ isotope,
 }
 /*css class defined for new footer design*/
 .newfooterheading {
-   border-bottom:2px solid #eaedef; 
-   padding-bottom:5px; 
+   border-bottom:2px solid #eaedef;
+   padding-bottom:5px;
    color:#919bac;
    width:90%;
 }
 .footerheadingextendedcolumn {
-    border-bottom:2px solid #eaedef; 
-    padding-bottom:5px; 
+    border-bottom:2px solid #eaedef;
+    padding-bottom:5px;
     color:#919bac;
     width:130%;
 }
@@ -3220,7 +3220,7 @@ isotope,
     margin-right:11px;
 }
 .twitterimage:hover {
-    background-position: -32px 0px;  
+    background-position: -32px 0px;
 }
 .googleplusimage {
 	background-image: url('/content/images/social/social.png');
@@ -3261,7 +3261,7 @@ footer .container, footer .copyright{
 }
 .custom-message {
 	margin-top: -24px;
-	margin-bottom: 30px; 
+	margin-bottom: 30px;
 	font-size: 15px;
 	color: #dd4d3b;
 	text-align: center;
@@ -5829,7 +5829,7 @@ li.active .chevron {
 }
 .list-group-item,.list-group-item a, .profile-subtext{
   text-decoration : none;
-  color: #919bac; 
+  color: #919bac;
   font-size: 13px;
   line-height : 15px;
 }
@@ -5907,7 +5907,7 @@ li.active .chevron {
 }
 .credits-deposit-container{
   padding-left: 10px;
-    padding-right: 10px;  
+    padding-right: 10px;
 }
 .border-right{
   border-right: 1px solid #eaedef;
@@ -5988,7 +5988,7 @@ ul.nav-filter > li.active > a{
   color: #fff;
 }
 .nav-filter .dropdown-menu{
-  min-width: 100px; 
+  min-width: 100px;
   border: 0;
 }
 .credits-widget .input-group-btn .btn{
@@ -6029,7 +6029,7 @@ ul.nav-filter > li.active > a{
   font-size: 18px;
 }
 .transactions-operator{
-  font-size: 12px;  
+  font-size: 12px;
 }
 .transactions-rs{
   font-size: 12px;
@@ -6162,7 +6162,7 @@ a.edit-profile-password:hover{
   color: #919bac;
 }
 .fc-subtext-small{
-  color: #919bac; 
+  color: #919bac;
   font-size: 11px;
   line-height : 16px;
 }
@@ -6385,32 +6385,32 @@ a.edit-profile-password:hover{
   cursor: pointer;
 }
 .force-fb{
-  vertical-align: middle; 
-  position: relative; 
-  z-index: 10; 
-  background: none repeat scroll 0% 0% rgb(255, 255, 255); 
-  display: inline-block; 
-  padding: 20px; 
+  vertical-align: middle;
+  position: relative;
+  z-index: 10;
+  background: none repeat scroll 0% 0% rgb(255, 255, 255);
+  display: inline-block;
+  padding: 20px;
   text-align: left;
   width:48%;
 }
 .force-fb > h2{
-  margin: 0px 0px 15px; 
-  float: left; 
-  width: 100%; 
-  padding: 0px 0px 15px; 
-  border-bottom: 1px solid rgb(102, 102, 102); 
-  font-size: 18px; color: rgb(85, 85, 85); 
-  text-transform: uppercase; 
-  letter-spacing: 1px; 
+  margin: 0px 0px 15px;
+  float: left;
+  width: 100%;
+  padding: 0px 0px 15px;
+  border-bottom: 1px solid rgb(102, 102, 102);
+  font-size: 18px; color: rgb(85, 85, 85);
+  text-transform: uppercase;
+  letter-spacing: 1px;
   word-spacing: 3px;
 }
 .security-mes{
-  float: left; 
-  width: 100%; 
-  text-align: justify; 
-  color: rgb(102, 102, 102); 
-  margin-bottom: 22px; 
+  float: left;
+  width: 100%;
+  text-align: justify;
+  color: rgb(102, 102, 102);
+  margin-bottom: 22px;
   font-size: 15px;
 }
 .common{
@@ -6428,7 +6428,7 @@ a.edit-profile-password:hover{
   width:100%;
 }
 .with-fb{
-  background: none repeat scroll 0% 0% rgb(76, 158, 217); 
+  background: none repeat scroll 0% 0% rgb(76, 158, 217);
   color: rgb(255, 255, 255); margin-left: 7px;
 }
 .cancel{

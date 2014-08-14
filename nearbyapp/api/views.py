@@ -9,10 +9,23 @@ from api.models import Event, User, Bookmark, Movie
 class EventList(generics.ListAPIView):
     model = Event
     serializer_class = EventSerializer
-    filter_fields = ('title')
+    #filter_fields = ('title')
     permission_classes = [
         permissions.AllowAny
     ]
+
+    def get_queryset(self):
+        queryset = Event.objects.all()
+        city = self.request.QUERY_PARAMS.get('city',None)
+        category = self.request.QUERY_PARAMS.get('category',None)
+
+        if city is not None:
+            queryset = Event.objects.filter(city=city)
+
+        if category is not None:
+            queryset = Event.objects.filter(category=category)
+
+        return queryset
 
 
 class EventDetail(generics.RetrieveAPIView):
@@ -85,6 +98,5 @@ class MovieList(generics.ListAPIView):
 
         if theater is not None:
             queryset = Movie.objects.filter(theater=theater)
-
 
         return queryset

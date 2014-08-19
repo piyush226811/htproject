@@ -16,12 +16,8 @@ class EventbriteApi(CronJobBase):
     RUN_EVERY_HOUR = 0.2;
 
     schedule = Schedule(run_every_mins=RUN_EVERY_HOUR)
-    code = 'events.hour_notif'    # a unique code
-
-    def do(self):
-
-        #to strip the html tag in desc
-        def remove_html_markup(s):
+    code = 'eventbrite.hour_notif'    # a unique code
+    def remove_html_markup(self,s):
             tag = False
             quote = False
             out = ""
@@ -38,46 +34,56 @@ class EventbriteApi(CronJobBase):
 
             return out
 
-    app_key='7D2FFPVTEHALDHKIQB'
-    api = eventbrite.API(app_key)
+    
+    def do(self):
+        cityname=City.objects.all()
+        #print cityname
+        for city in cityname:
+            print city.city_name
+            location=city.city_name
+            if (location!="None"):
+        #to strip the html tag in desc
+        
+                app_key='7D2FFPVTEHALDHKIQB'
+                api = eventbrite.API(app_key)
 
-    events = api.call('/event_search', city='Delhi')
+                events = api.call('/event_search', city= location)
 
-    for e in events['events']:
-    	#pdb.set_trace()
-    	if(e.get("summary")):
-    		print "ok"
-    	else:
-    		#print e["event"]["locale"]
-    		(event, created) = Event.objects.get_or_create(eventid=e["event"]['id'])
-    		if not created: continue
+                for e in events['events']:
+                	#pdb.set_trace()
+                	if(e.get("summary")):
+                		print "ok"
+                	else:
+                		#print e["event"]["locale"]
+                		(event, created) = Event.objects.get_or_create(eventid=e["event"]['id'])
+                		if not created: continue
 
-    		print 'Processing event: "%s"' % e['event']['title']
+                		print 'Processing event: "%s"' % e['event']['title']
 
-    		event.eventid = e["event"]['id']
-    		event.title = e['event']['title']
-    		event.description = remove_html_markup(e['event']['description'])
-    		event.organizer = e["event"]["organizer"]["name"]
-    		event.venue = e["event"]["venue"]['name'] + e["event"]["venue"]['address_2'] + e["event"]["venue"]['address'] + e["event"]["venue"]['city'] +e["event"]["venue"]['region'] + e["event"]["venue"]['postal_code']
-    		if e["event"].get('category'):
-    			event.category = e["event"]["category"]
-    		else:
-    			event.category = 'None'
-    		if e["event"].get('logo'):
-    			event.image = e["event"]['logo']
-    		else:
-    			event.image = 'None'
+                		event.eventid = e["event"]['id']
+                		event.title = e['event']['title']
+                		event.description = self.remove_html_markup(e['event']['description'])
+                		event.organizer = e["event"]["organizer"]["name"]
+                		event.venue = e["event"]["venue"]['name'] + e["event"]["venue"]['address_2'] + e["event"]["venue"]['address'] + e["event"]["venue"]['city'] +e["event"]["venue"]['region'] + e["event"]["venue"]['postal_code']
+                		if e["event"].get('category'):
+                			event.category = e["event"]["category"]
+                		else:
+                			event.category = 'None'
+                		if e["event"].get('logo'):
+                			event.image = e["event"]['logo']
+                		else:
+                			event.image = 'None'
 
-    		event.latitude = e["event"]["venue"]['latitude']
-    		event.longitude = e["event"]["venue"]['longitude']
-    		event.city = e["event"]["venue"]['city']
-    		event.api_vendor = 'Eventbrite'
-    		event.event_url = e["event"]["organizer"]["url"]
+                		event.latitude = e["event"]["venue"]['latitude']
+                		event.longitude = e["event"]["venue"]['longitude']
+                		event.city = e["event"]["venue"]['city']
+                		event.api_vendor = 'Eventbrite'
+                		event.event_url = e["event"]["organizer"]["url"]
 
-    		datetime = e["event"]['start_date'].split(' ')
-    		event.event_date = datetime[0]
-    		event.event_time = datetime[1]
+                		datetime = e["event"]['start_date'].split(' ')
+                		event.event_date = datetime[0]
+                		event.event_time = datetime[1]
 
-    		event.save()
+                		event.save()
 
 

@@ -288,89 +288,78 @@ height:20px;
 <script type="text/javascript">
 
 var subscribedTheatres = [];
-  {% for item in subscribedTheatres %}
-  subscribedTheatres.push("{{ item }}");
-  {% endfor %}
 
-  var bookmark_button = document.getElementById( 'bookmarkButton' );
-  bookmark_button.onclick = function() {
+{% for item in subscribedTheatres %}
+    subscribedTheatres.push("{{ item }}");
+{% endfor %}
 
-  var elt = document.getElementById( 'theater' );
-  var theatre_name = elt.options[elt.selectedIndex].text;
-  //var fbid = 1;
+var bookmark_button = document.getElementById( 'bookmarkButton' );
+bookmark_button.onclick = function() {
+    var elt = document.getElementById( 'theater' );
+    var theatre_name = elt.options[elt.selectedIndex].text;
+    //var fbid = 1;
 
-  //alert(theatre_name+" "+fbid);
+    //alert(theatre_name+" "+fbid);
 
+    if(bookmark_button.className == "bookmarkButton unSubscribe") {
+        url = "http://3412768d.ngrok.com/bookmark_movies/unset/{{ request.session.fbid }}/"+theatre_name+"/";
+    }
+    else {
+        url = "http://3412768d.ngrok.com/bookmark_movies/set/{{ request.session.fbid }}/"+theatre_name+"/";
+    }
 
+    //alert(theatre_name);
 
+    var xmlhttp;
 
+    if (window.XMLHttpRequest) {
+        // code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp=new XMLHttpRequest();
+    }
+    else {
+        // code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
 
-
-  if(bookmark_button.className == "bookmarkButton unSubscribe"){
-       url = "http://3412768d.ngrok.com/bookmark_movies/unset/{{ request.session.fbid }}/"+theatre_name+"/";
-  }
-  else
-  {
-     url = "http://3412768d.ngrok.com/bookmark_movies/set/{{ request.session.fbid }}/"+theatre_name+"/";
-  }
-
-  //alert(theatre_name);
-
-  var xmlhttp;
-      if (window.XMLHttpRequest)
-      {// code for IE7+, Firefox, Chrome, Opera, Safari
-          xmlhttp=new XMLHttpRequest();
-      }
-      else
-      {// code for IE6, IE5
-          xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-      }
-      xmlhttp.onreadystatechange=function()
-      {
+    xmlhttp.onreadystatechange=function() {
         if (xmlhttp.readyState==4 && xmlhttp.status==200){
             if(bookmark_button.className == "bookmarkButton unSubscribe"){
-                 bookmark_button.innerHTML = "Bookmark this theatre";
-                 bookmark_button.className = "bookmarkButton subscribe";
-                 //url = "http://3412768d.ngrok.com/bookmark_movies/unset/{{ request.session.fbid }}/"+theatre_name+"/";
-              }
-              else
-              {
-                 bookmark_button.innerHTML = "Remove bookmark";
-                 bookmark_button.className = "bookmarkButton unSubscribe";
-                 //url = "http://3412768d.ngrok.com/bookmark_movies/set/{{ request.session.fbid }}/"+theatre_name+"/";
-              }
+                bookmark_button.innerHTML = "Bookmark this theatre";
+                bookmark_button.className = "bookmarkButton subscribe";
+                //url = "http://3412768d.ngrok.com/bookmark_movies/unset/{{ request.session.fbid }}/"+theatre_name+"/";
+            }
+            else {
+                bookmark_button.innerHTML = "Remove bookmark";
+                bookmark_button.className = "bookmarkButton unSubscribe";
+                //url = "http://3412768d.ngrok.com/bookmark_movies/set/{{ request.session.fbid }}/"+theatre_name+"/";
+            }
+        }
+    }
 
-          }
-      }
-      xmlhttp.open("POST",url,true);
-      //alert(csrf_token);
-      xmlhttp.setRequestHeader("X-CSRFToken", csrf_token);
-      xmlhttp.send();
-
-
+    xmlhttp.open("POST",url,true);
+    //alert(csrf_token);
+    xmlhttp.setRequestHeader("X-CSRFToken", csrf_token);
+    xmlhttp.send();
 }
 
-
- var movie_select = document.getElementById( 'movie' );
- movie_select.onchange = function() {
-
+var movie_select = document.getElementById( 'movie' );
+movie_select.onchange = function() {
     //document.getElementById("theater").getElementsByTagName('option')[0].selected ='selected';
     document.getElementById("theater").value ='default';
 
     url = this.options[ this.selectedIndex ].value ;
     var xmlhttp;
-    if (window.XMLHttpRequest)
-    {// code for IE7+, Firefox, Chrome, Opera, Safari
+
+    if (window.XMLHttpRequest) {
+        // code for IE7+, Firefox, Chrome, Opera, Safari
         xmlhttp=new XMLHttpRequest();
     }
-    else
-    {// code for IE6, IE5
+    else {
+        // code for IE6, IE5
         xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
     }
-    xmlhttp.onreadystatechange=function()
-    {
-        if (xmlhttp.readyState==4 && xmlhttp.status==200)
-        {
+    xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
             jsonResponse = xmlhttp.responseText;
             //alert(jsonResponse)
             json = JSON.parse(jsonResponse);
@@ -388,11 +377,8 @@ var subscribedTheatres = [];
 
             var header;
             while (parent.firstChild) {
-
-              parent.removeChild(parent.firstChild);
-
+                parent.removeChild(parent.firstChild);
             }
-
 
             var node = document.createElement("div");
             node.setAttribute("class","heading");
@@ -415,64 +401,61 @@ var subscribedTheatres = [];
 
             for(key in objJSON){
 
-              node = document.createElement("div");
-              node.setAttribute("class","table-row");
+                node = document.createElement("div");
+                node.setAttribute("class","table-row");
 
-              for(k in objJSON[key]){
-                  //console.log(k)
+                for(k in objJSON[key]){
+                    //console.log(k)
 
-                  if(k=="title")continue;
-                  td = document.createElement("div");
-                  td.setAttribute("class","col");
-                  td.innerHTML = objJSON[key][k]
-                  node.appendChild(td);
-
+                    if(k=="title")continue;
+                    td = document.createElement("div");
+                    td.setAttribute("class","col");
+                    td.innerHTML = objJSON[key][k]
+                    node.appendChild(td);
                 }
 
                 parent.appendChild(node);
-
             }
-
         }
     }
+
     xmlhttp.open("GET",url,true);
     xmlhttp.send();
 
- };
+};
 
 
- var theatre_select = document.getElementById( 'theater' );
- theatre_select.onchange = function() {
+var theatre_select = document.getElementById( 'theater' );
+theatre_select.onchange = function() {
 
     var theatre_name = theatre_select.options[theatre_select.selectedIndex].text;
     var bookmark_button = document.getElementById( 'bookmarkButton' );
 
-    if(subscribedTheatres.indexOf(theatre_name) > 0){
-      //alert("Hi");
-      bookmark_button.innerHTML = "Remove bookmark";
-      bookmark_button.className = "bookmarkButton unSubscribe";
+    if(subscribedTheatres.indexOf(theatre_name) > 0) {
+        //alert("Hi");
+        bookmark_button.innerHTML = "Remove bookmark";
+        bookmark_button.className = "bookmarkButton unSubscribe";
     }
-    else{
-      bookmark_button.innerHTML = "Bookmark this theatre";
-      bookmark_button.className = "bookmarkButton subscribe";
+    else {
+        bookmark_button.innerHTML = "Bookmark this theatre";
+        bookmark_button.className = "bookmarkButton subscribe";
     }
 
     document.getElementById("movie").value ='default';
 
     url = this.options[ this.selectedIndex ].value ;
     var xmlhttp;
-    if (window.XMLHttpRequest)
-    {// code for IE7+, Firefox, Chrome, Opera, Safari
+    if (window.XMLHttpRequest) {
+        // code for IE7+, Firefox, Chrome, Opera, Safari
         xmlhttp=new XMLHttpRequest();
     }
-    else
-    {// code for IE6, IE5
+    else {
+        // code for IE6, IE5
         xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
     }
-    xmlhttp.onreadystatechange=function()
-    {
-        if (xmlhttp.readyState==4 && xmlhttp.status==200)
-        {
+
+    xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
             jsonResponse = xmlhttp.responseText;
             //alert(jsonResponse)
             json = JSON.parse(jsonResponse);
@@ -489,10 +472,9 @@ var subscribedTheatres = [];
             //alert(parent.className);
 
             var header;
+
             while (parent.firstChild) {
-
               parent.removeChild(parent.firstChild);
-
             }
 
 
@@ -517,16 +499,16 @@ var subscribedTheatres = [];
 
             for(key in objJSON){
 
-              node = document.createElement("div");
-              node.setAttribute("class","table-row");
+                node = document.createElement("div");
+                node.setAttribute("class","table-row");
 
-              for(k in objJSON[key]){
-                  //console.log(k)
-                  if(k=="theater")continue;
-                  td = document.createElement("div");
-                  td.setAttribute("class","col");
-                  td.innerHTML = objJSON[key][k]
-                  node.appendChild(td);
+                for(k in objJSON[key]){
+                    //console.log(k)
+                    if(k=="theater")continue;
+                    td = document.createElement("div");
+                    td.setAttribute("class","col");
+                    td.innerHTML = objJSON[key][k]
+                    node.appendChild(td);
 
                 }
 
@@ -539,10 +521,9 @@ var subscribedTheatres = [];
     xmlhttp.open("GET",url,true);
     xmlhttp.send();
 
- };
+};
+
 </script>
-
-
 
 </body>
 </html>

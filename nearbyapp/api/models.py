@@ -75,6 +75,12 @@ class Movie (models.Model):
     def __unicode__ (self):
         return str(self.theater)
 
+class City (models.Model):
+    city_name = models.CharField(max_length=100, blank=True, null=True)
+
+    def __unicode__ (self):
+        return str(self.city_name)
+
 class Movie_bookmark (models.Model):
 
     user = models.ForeignKey(User, to_field='fbid', related_name='movie_bookmarks')

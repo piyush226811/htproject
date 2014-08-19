@@ -164,222 +164,195 @@
 
 <script type="text/javascript">
 
-    function searchCities(){
-        //alert();
-        city_name = document.getElementById("city_name").value
-        show(city_name);
+function searchCities(){
+    //alert();
+    city_name = document.getElementById("city_name").value
+    show(city_name);
+}
+
+var x = document.getElementById('loc')
+
+function getLocation() {
+    //show("Gurgaon");
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
     }
-
-
-    var x = document.getElementById('loc')
-
-    function getLocation()
-    {
-        //show("Gurgaon");
-
-        if (navigator.geolocation)
-        {
-                navigator.geolocation.getCurrentPosition(showPosition);
-            }
-        else
-        {
-                    x.innerHTML = "Geolocation is not supported by this browser.";
-            }
+    else {
+        x.innerHTML = "Geolocation is not supported by this browser.";
     }
-    var geocoder;
-    function showPosition(position)
-    {
+}
 
-        var lat = position.coords.latitude;
-        var lng = position.coords.longitude;
-            geocoder = new google.maps.Geocoder();
-            var latlng = new google.maps.LatLng(lat, lng);
-            //alert(lat+" "+lng)
-            geocoder.geocode({'latLng': latlng}, function(results, status) {
-            if (status == google.maps.GeocoderStatus.OK)
-            {
+var geocoder;
 
-                console.log(results)
-                if (results[1])
-                {
+function showPosition(position) {
+    var lat = position.coords.latitude;
+    var lng = position.coords.longitude;
 
-                    for (var i=0; i<results[4].address_components.length; i++)
-                    {
-                        for (var b=0;b<results[4].address_components[i].types.length;b++)
-                        {
+    geocoder = new google.maps.Geocoder();
+    var latlng = new google.maps.LatLng(lat, lng);
+    //alert(lat+" "+lng)
+    geocoder.geocode({'latLng': latlng}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+            console.log(results)
 
-                            if (results[4].address_components[i].types[b] == "locality")
-                                {
-
-                                    city= results[4].address_components[i];
-                                    break;
-                                }
+            if (results[1]) {
+                for (var i=0; i<results[4].address_components.length; i++) {
+                    for (var b=0;b<results[4].address_components[i].types.length;b++) {
+                        if (results[4].address_components[i].types[b] == "locality") {
+                            city= results[4].address_components[i];
+                            break;
                         }
                     }
+                }
+
                 //city data
-                    x.innerHTML = city.long_name;
-                    //alert('re');
-                    show(city.long_name)
-                }
-                else
-                {
-                    alert("No results found");
-                }
+                x.innerHTML = city.long_name;
+                //alert('re');
+                show(city.long_name)
             }
-            else
-            {
-                alert("Geocoder failed due to: " + status);
+            else {
+                alert("No results found");
             }
-        });
+        }
+        else {
+            alert("Geocoder failed due to: " + status);
+        }
+    });
+}
+
+
+function show(str) {
+    var xmlhttp;
+
+    if (window.XMLHttpRequest) {
+        // code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp=new XMLHttpRequest();
+    }
+    else {
+        // code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
     }
 
+    xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+            //document.getElementById("trigger").innerHTML=xmlhttp.responseText;
+            jsonResponse = xmlhttp.responseText;
+            //alert(jsonResponse)
+            json = JSON.parse(jsonResponse);
+            var objJSON = eval("(function(){return " + jsonResponse + ";})()");
+            //alert(json)
+            //alert(objJSON)
 
+            var child = document.getElementsByClassName("coupon");
+            var parent = document.getElementById("trigger");
+            //var parent = child.parentNode;
+            //alert(parent.firstChild);
 
+            while (parent.firstChild) {
+                parent.removeChild(parent.firstChild);
+                //alert("Hi");
+            }
 
-    function show(str)
-    {
+            var node,tr,tr1,tr2,tr3,tr4,tr5,tr6,tr7,td,td1,td2,td3,td4,td5,td6;
 
-        var xmlhttp;
+            for(key in objJSON){
+                node = document.createElement("div");
+                node.setAttribute("class","coupon");
+                tr = document.createElement("a");
+                tr.setAttribute("class","btn btn-special coupon-pick-button btn-secondary");
+                tr.innerHTML = "DETAILS"
+                tr1 = document.createElement("p");
+                tr2 = document.createElement("div");
+                tr2.setAttribute("class","details");
+                tr3 = document.createElement("div");
+                tr3.setAttribute("class","info clearfix");
+                tr4 = document.createElement("div");
+                tr4.setAttribute("class","left");
+                tr5 = document.createElement("div");
+                tr5.setAttribute("class","right");
 
-        if (window.XMLHttpRequest)
-        {// code for IE7+, Firefox, Chrome, Opera, Safari
+                tr6 = document.createElement("div");
+                tr6.setAttribute("class","image");
 
-            xmlhttp=new XMLHttpRequest();
-        }
-        else
-        {// code for IE6, IE5
-            xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-        }
+                tr7 = document.createElement("a");
 
-        xmlhttp.onreadystatechange=function()
-        {
-            if (xmlhttp.readyState==4 && xmlhttp.status==200)
-            {
+                //tr1.setAttribute("class","description");
 
-                //document.getElementById("trigger").innerHTML=xmlhttp.responseText;
-                jsonResponse = xmlhttp.responseText;
-                //alert(jsonResponse)
-                json = JSON.parse(jsonResponse);
-                var objJSON = eval("(function(){return " + jsonResponse + ";})()");
-                //alert(json)
-                //alert(objJSON)
-                var child = document.getElementsByClassName("coupon");
-                var parent = document.getElementById("trigger");
-                //var parent = child.parentNode;
-                //alert(parent.firstChild);
+                for(k in objJSON[key]){
+                    if (k == "id") {
+                        tr7.setAttribute("href","/events/"+objJSON[key][k]);
+                    }
 
+                    if (k == "image") {
+                        //console.log(k)
+                        td5 = document.createElement("img");
+                        if(objJSON[key][k] == "None" || objJSON[key][k] == "none" || objJSON[key][k] == null) {
+                            td5.setAttribute("src","http://cdn.panasonic.com/images/imageNotFound400.jpg");
+                        }
+                        else {
+                            td5.setAttribute("src",objJSON[key][k]);
+                        }
+                        td5.setAttribute("width","200");
+                        td5.setAttribute("heigth","135");
 
-                while (parent.firstChild) {
-                    parent.removeChild(parent.firstChild);
-                    //alert("Hi");
+                        tr6.appendChild(td5);
+                    }
+
+                    if (k == "title") {
+                        //console.log(k)
+                        td = document.createElement("p");
+                        td.setAttribute("class","description");
+
+                        td.innerHTML = objJSON[key][k]
+                        tr1.appendChild(td);
+                    }
+
+                    if (k == "city") {
+                        td1 = document.createElement("span");
+                        td1.setAttribute("class","save-text");
+                        td1.innerHTML = "CITY"
+                        td2 = document.createElement("p");
+                        td2.setAttribute("class","price");
+                        td2.innerHTML = objJSON[key][k]
+                        tr4.appendChild(td1);
+                        tr4.appendChild(td2);
+                    }
+
+                    if (k == "event_date") {
+                        td3 = document.createElement("p");
+                        td3.setAttribute("class","expiry");
+                        td4 = document.createElement("span");
+                        td4.innerHTML = "DATE";
+                        td6 = document.createElement("p");
+                        td6.innerHTML = objJSON[key][k]
+
+                        td3.appendChild(td4);
+                        td3.appendChild(td6);
+                        //tr5.appendChild(td4);
+                        tr5.appendChild(td3);
+                    }
+
+                    tr3.appendChild(tr4);
+                    tr3.appendChild(tr5);
+
+                    tr7.appendChild(tr6);
+
+                    node.appendChild(tr7);
+                    node.appendChild(tr);
+                    node.appendChild(tr1);
+                    node.appendChild(tr2);
+                    node.appendChild(tr3);
                 }
-
-                var node,tr,tr1,tr2,tr3,tr4,tr5,tr6,tr7,td,td1,td2,td3,td4,td5,td6;
-                for(key in objJSON){
-                    node = document.createElement("div");
-                    node.setAttribute("class","coupon");
-                    tr = document.createElement("a");
-                    tr.setAttribute("class","btn btn-special coupon-pick-button btn-secondary");
-                    tr.innerHTML = "DETAILS"
-                    tr1 = document.createElement("p");
-                    tr2 = document.createElement("div");
-                    tr2.setAttribute("class","details");
-                    tr3 = document.createElement("div");
-                    tr3.setAttribute("class","info clearfix");
-                    tr4 = document.createElement("div");
-                    tr4.setAttribute("class","left");
-                    tr5 = document.createElement("div");
-                    tr5.setAttribute("class","right");
-
-                    tr6 = document.createElement("div");
-                    tr6.setAttribute("class","image");
-
-                    tr7 = document.createElement("a");
-
-                    //tr1.setAttribute("class","description");
-                    for(k in objJSON[key]){
-                        if (k == "id") {
-                            tr7.setAttribute("href","/events/"+objJSON[key][k]);
-                        }
-
-                        if (k == "image") {
-                            //console.log(k)
-                            td5 = document.createElement("img");
-                            if(objJSON[key][k] == "None" || objJSON[key][k] == "none" || objJSON[key][k] == null) {
-                                td5.setAttribute("src","http://cdn.panasonic.com/images/imageNotFound400.jpg");
-                            }
-                            else{
-                                td5.setAttribute("src",objJSON[key][k]);
-                            }
-                            td5.setAttribute("width","200");
-                            td5.setAttribute("heigth","135");
-
-                            tr6.appendChild(td5);
-                        }
-
-                        if (k == "title") {
-                            //console.log(k)
-                            td = document.createElement("p");
-                            td.setAttribute("class","description");
-
-                            td.innerHTML = objJSON[key][k]
-                            tr1.appendChild(td);
-                        }
-
-                        if (k == "city") {
-
-                            td1 = document.createElement("span");
-                            td1.setAttribute("class","save-text");
-                            td1.innerHTML = "CITY"
-                            td2 = document.createElement("p");
-                            td2.setAttribute("class","price");
-                            td2.innerHTML = objJSON[key][k]
-                            tr4.appendChild(td1);
-                            tr4.appendChild(td2);
-                        }
-
-                        if (k == "event_date") {
-
-                            td3 = document.createElement("p");
-                            td3.setAttribute("class","expiry");
-                            td4 = document.createElement("span");
-                            td4.innerHTML = "DATE";
-                            td6 = document.createElement("p");
-                            td6.innerHTML = objJSON[key][k]
-
-                            td3.appendChild(td4);
-                            td3.appendChild(td6);
-                            //tr5.appendChild(td4);
-                            tr5.appendChild(td3);
-
-                        }
-
-                        tr3.appendChild(tr4);
-                        tr3.appendChild(tr5);
-
-                        tr7.appendChild(tr6);
-
-                        node.appendChild(tr7);
-                        node.appendChild(tr);
-                        node.appendChild(tr1);
-                        node.appendChild(tr2);
-                        node.appendChild(tr3);
-                     }
-                    parent.appendChild(node);
-                }
+                parent.appendChild(node);
             }
         }
+    }
 
     xmlhttp.open("GET","http://3412768d.ngrok.com/api/events?city="+str+"&format=json",true);
     xmlhttp.send();
-
-    }
-
-
+}
 </script>
-
-
-
 
 </body>
 </html>

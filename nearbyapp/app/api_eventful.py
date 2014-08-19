@@ -16,61 +16,68 @@ class EventfulApi(CronJobBase):
     RUN_EVERY_HOUR = 0.2;
 
     schedule = Schedule(run_every_mins=RUN_EVERY_HOUR)
-    code = 'events.hour_notif'    # a unique code
+    code = 'eventful.hour_notif'    # a unique code
+    def remove_html_markup(self,s):
+        tag = False
+        quote = False
+        out = ""
 
-    def do(self):
-        def remove_html_markup(s):
-            tag = False
-            quote = False
-            out = ""
-
-            for c in s:
-                    if c == '<' and not quote:
-                        tag = True
-                    elif c == '>' and not quote:
-                        tag = False
-                    elif (c == '"' or c == "'") and tag:
-                        quote = not quote
-                    elif not tag:
-                        out = out + c
+        for c in s:
+            if c == '<' and not quote:
+                tag = True
+            elif c == '>' and not quote:
+                tag = False
+            elif (c == '"' or c == "'") and tag:
+                quote = not quote
+            elif not tag:
+                out = out + c
 
             return out
 
-        api = eventful.API('mm576kLMq5X9DRgt')
-        # api.login('username', 'password')
-        events = api.call('/events/search', l='Gurgaon')
-        events = api.call('/events/search', l='Gurgaon',page_size=(events['total_items']))
-        #print events
-        for e in events['events']['event']:
-        	(event, created) = Event.objects.get_or_create(eventid=e['id'])
-        	if not created: continue
+    def do(self):
+        
+        cityname=City.objects.all()
+        #print cityname
+        for city in cityname:
+            print city.city_name
+            location=city.city_name
+            if (location!="None"):
 
-        	print 'Processing event: "%s"' % e['title']
+                api = eventful.API('mm576kLMq5X9DRgt')
+                # api.login('username', 'password')
+                events = api.call('/events/search', l=location)
+                events = api.call('/events/search', l=location,page_size=(events['total_items']))
+                #print events
+                for e in events['events']['event']:
+                	(event, created) = Event.objects.get_or_create(eventid=e['id'])
+                	if not created: continue
 
-        	event.eventid = e['id']
-        	event.title = e['title']
-        	event.description = remove_html_markup(e['description'])
-        	event.organizer = e['owner']
-        	if e.get('venue_address'):
-        		event.venue = e['venue_address']
-        	else:
-        		event.venue = 'None'
+                	print 'Processing event: "%s"' % e['title']
 
-        	event.category = 'None'
+                	event.eventid = e['id']
+                	event.title = e['title']
+                	event.description = self.remove_html_markup(e['description'])
+                	event.organizer = e['owner']
+                	if e.get('venue_address'):
+                		event.venue = e['venue_address']
+                	else:
+                		event.venue = 'None'
 
-        	if e.get('image'):
-        		event.image = e['image']['url']
-        	else:
-        		event.image = 'None'
+                	event.category = 'None'
 
-        	event.latitude = e['latitude']
-        	event.longitude = e['longitude']
-        	event.city = e['city_name']
-        	event.api_vendor = 'Eventful'
-        	event.event_url = e['url']
+                	if e.get('image'):
+                		event.image = e['image']['url']
+                	else:
+                		event.image = 'None'
 
-        	datetime = e['start_time'].split(' ')
-        	event.event_date = datetime[0]
-        	event.event_time = datetime[1]
+                	event.latitude = e['latitude']
+                	event.longitude = e['longitude']
+                	event.city = e['city_name']
+                	event.api_vendor = 'Eventful'
+                	event.event_url = e['url']
 
-        	event.save()
+                	datetime = e['start_time'].split(' ')
+                	event.event_date = datetime[0]
+                	event.event_time = datetime[1]
+
+                	event.save()

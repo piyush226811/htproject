@@ -206,71 +206,53 @@
 
 <script>
 
+function unsubscribe() {
+    var xmlhttp;
+    if (window.XMLHttpRequest) {
+        // code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp=new XMLHttpRequest();
+    }
+    else {
+        // code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
 
+    xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+            document.getElementById("unsub").style.display = 'none';
+            document.getElementById("sub").style.display = 'block';
+        }
+    }
 
-function unsubscribe()
-{
-
-
-
-var xmlhttp;
-if (window.XMLHttpRequest)
-  {// code for IE7+, Firefox, Chrome, Opera, Safari
-  xmlhttp=new XMLHttpRequest();
-  }
-else
-  {// code for IE6, IE5
-  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-  }
-xmlhttp.onreadystatechange=function()
-  {
-  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-    {
-     document.getElementById("unsub").style.display = 'none';
-  document.getElementById("sub").style.display = 'block';
-   }
-  }
-
-
-xmlhttp.open("POST","http://3412768d.ngrok.com/bookmarks/unset/{{request.session.fbid}}/{{ event.id }}/",true);
-xmlhttp.setRequestHeader("X-CSRFToken", csrf_token);
-xmlhttp.send();
+    xmlhttp.open("POST","http://3412768d.ngrok.com/bookmarks/unset/{{request.session.fbid}}/{{ event.id }}/",true);
+    xmlhttp.setRequestHeader("X-CSRFToken", csrf_token);
+    xmlhttp.send();
 }
 
-
-
-function subscribe()
-{
-
-
-var xmlhttp;
-if (window.XMLHttpRequest)
-  {// code for IE7+, Firefox, Chrome, Opera, Safari
-  xmlhttp=new XMLHttpRequest();
-  }
-else
-  {// code for IE6, IE5
-  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-  }
-xmlhttp.onreadystatechange=function()
-  {
-  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-    {
-      document.getElementById("sub").style.display = 'none';
-  document.getElementById("unsub").style.display = 'block';
+function subscribe() {
+    var xmlhttp;
+    if (window.XMLHttpRequest) {
+        // code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp=new XMLHttpRequest();
     }
-  }
+    else {
+        // code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
 
+    xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+            document.getElementById("sub").style.display = 'none';
+            document.getElementById("unsub").style.display = 'block';
+        }
+    }
 
-xmlhttp.open("POST","http://3412768d.ngrok.com/bookmarks/set/{{ request.session.fbid }}/{{ event.id }}/",true);
-xmlhttp.setRequestHeader("X-CSRFToken", csrf_token);
-xmlhttp.send();
+    xmlhttp.open("POST","http://3412768d.ngrok.com/bookmarks/set/{{ request.session.fbid }}/{{ event.id }}/",true);
+    xmlhttp.setRequestHeader("X-CSRFToken", csrf_token);
+    xmlhttp.send();
 }
 
 </script>
-
-
-
 
 </body>
 </html>

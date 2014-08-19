@@ -1,5 +1,5 @@
 from django.contrib import admin
-from api.models import Event,User,Exp_Event, Movie
+from api.models import Event,User,Exp_Event, Movie, City
 
 # Register your models here.
 
@@ -15,7 +15,11 @@ class UserAdmin(admin.ModelAdmin):
 class MovieAdmin(admin.ModelAdmin):
     list_display = ("theater", "title", "venue", "category","timing", "date","city")
 
+class CityAdmin(admin.ModelAdmin):
+    list_display = ("city_name",)
+
 admin.site.register(Movie, MovieAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(Exp_Event, EventAdmin)
 admin.site.register(User, UserAdmin)
+admin.site.register(City, CityAdmin)

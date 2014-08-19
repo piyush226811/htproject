@@ -106,7 +106,7 @@
                                 {% for category in categories %}
                                 <li class="checkbox">
                                     <label>
-                                        <input name="Food" value="Food" checked="" data-category-detail="" data-category-name="Food" data-category-id="1" type="checkbox">{{category.category}}
+                                        <input class="categoryCheckbox" onchange="category_update('{{category}}')" checked="" type="checkbox">{{category}}
 
                                     </label>
                                 </li>
@@ -163,6 +163,46 @@
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
 
 <script type="text/javascript">
+
+ var categories = [];
+    {% for category in categories %}
+    categories.push("{{ category }}");
+    {% endfor %}
+
+    function category_update(category){
+
+        index = categories.indexOf(category);
+
+        //alert(categories)
+
+        if (index > -1) {
+            categories.splice(index, 1);
+        }
+        else categories.push(category);
+
+        city = x.innerHTML;
+        if(city == "Please share your location!"){
+           city="None"
+        }
+        show(city,categories);
+    }
+
+    var x = document.getElementById('loc')
+
+    var re = document.getElementById("refresh_button");
+    re.onclick = function(){
+
+        city = x.innerHTML;
+        if(city == "Please share your location!"){
+           city="None"
+        }
+        show(city,categories);
+
+        //alert(x.innerHTML+" "+ categories)
+
+    }
+
+
 
 function searchCities(){
     //alert();
@@ -222,7 +262,12 @@ function showPosition(position) {
 }
 
 
-function show(str) {
+function show(str, categories_list) {
+    url = "{% url 'event-detail' 1%}";
+    url = url.substring(0,url.length - 2);
+
+
+    category = categories_list || "None"
     var xmlhttp;
 
     if (window.XMLHttpRequest) {
@@ -349,7 +394,7 @@ function show(str) {
         }
     }
 
-    xmlhttp.open("GET","http://3412768d.ngrok.com/api/events?city="+str+"&format=json",true);
+    xmlhttp.open("GET",url+"?city="+str+"&category="+category+"format=json",true);
     xmlhttp.send();
 }
 </script>

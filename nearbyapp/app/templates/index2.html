@@ -189,11 +189,14 @@ height:20px;
             <div class="fixed-nav coupon-page-header affix-top" id="fixed-nav">
                 <div class="container">
                     <div class="coupon-page-header-text">
-                        <h3>Your location is identified</h3>
-                            <p>Please give the access</p>
+                        <h3 id="loc">Share your location!</h3>
+                            <p id="loc1">Please give the access</p>
+                    </div>
+                    <div>
+                        <input type="text" onkeydown="if (event.keyCode == 13) searchCities()" id="city_name" name="city" size="21" maxlength="120"  placeholder="Search by City..." class="form-control integer parsley-validated" id="btnSearch">
                     </div>
                     <div class="coupon-page-header-button">
-                        <button id="couponContinue" class="btn btn-primary">Get Location<span class="three-quarters"></span></button>
+                        <button id="couponContinue" onclick="getLocation()" class="btn btn-primary">Get Location<span class="three-quarters"></span></button>
                     </div>
                 </div>
             </div>
@@ -284,8 +287,15 @@ height:20px;
 
 <script type="text/javascript" src="https://d2s1ih2yipot4l.cloudfront.net/content/js/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="https://d2s1ih2yipot4l.cloudfront.net/content/js/singlepage/lib/bootstrap.3.0.3.min.js"></script>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
 
 <script type="text/javascript">
+
+function searchCities(){
+    //alert();
+    city_name = document.getElementById("city_name").value
+    show(city_name);
+}
 
 var subscribedTheatres = [];
 
@@ -327,11 +337,13 @@ bookmark_button.onclick = function() {
                 bookmark_button.innerHTML = "Bookmark this theatre";
                 bookmark_button.className = "bookmarkButton subscribe";
                 //url = "http://3412768d.ngrok.com/bookmark_movies/unset/{{ request.session.fbid }}/"+theatre_name+"/";
+                subscribedTheatres.splice(theatre_name);
             }
             else {
                 bookmark_button.innerHTML = "Remove bookmark";
                 bookmark_button.className = "bookmarkButton unSubscribe";
                 //url = "http://3412768d.ngrok.com/bookmark_movies/set/{{ request.session.fbid }}/"+theatre_name+"/";
+                subscribedTheatres.push(theatre_name);
             }
         }
     }
@@ -383,7 +395,7 @@ movie_select.onchange = function() {
             var node = document.createElement("div");
             node.setAttribute("class","heading");
 
-            var head = ['Theater','Genre','Venue  ','City','Timing','Date']
+            var head = ['Theater','Genre','Venue','City','Timing','Date']
 
             for(var i=0; i<6;i++){
                 td = document.createElement("div");
@@ -431,7 +443,7 @@ theatre_select.onchange = function() {
     var theatre_name = theatre_select.options[theatre_select.selectedIndex].text;
     var bookmark_button = document.getElementById( 'bookmarkButton' );
 
-    if(subscribedTheatres.indexOf(theatre_name) > 0) {
+    if(subscribedTheatres.indexOf(theatre_name) > -1) {
         //alert("Hi");
         bookmark_button.innerHTML = "Remove bookmark";
         bookmark_button.className = "bookmarkButton unSubscribe";
@@ -481,7 +493,7 @@ theatre_select.onchange = function() {
             var node = document.createElement("div");
             node.setAttribute("class","heading");
 
-            var head = ['Movie','Genre','Venue  ','City','Date','Timing']
+            var head = ['Movie','Genre','Venue','City','Date','Timing']
 
             for(var i=0; i<6;i++){
                 td = document.createElement("div");
@@ -522,6 +534,131 @@ theatre_select.onchange = function() {
     xmlhttp.send();
 
 };
+
+var x = document.getElementById('loc')
+var x1 = document.getElementById('loc1')
+
+function getLocation() {
+    //show("Gurgaon");
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    }
+    else {
+        x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+
+var geocoder;
+
+function showPosition(position) {
+    var lat = position.coords.latitude;
+    var lng = position.coords.longitude;
+
+    geocoder = new google.maps.Geocoder();
+    var latlng = new google.maps.LatLng(lat, lng);
+    //alert(lat+" "+lng)
+    geocoder.geocode({'latLng': latlng}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+            console.log(results)
+            if (results[1]) {
+                for (var i=0; i<results[4].address_components.length; i++) {
+                    for (var b=0;b<results[4].address_components[i].types.length;b++) {
+                        if (results[4].address_components[i].types[b] == "locality") {
+                            city= results[4].address_components[i];
+                            break;
+                        }
+                    }
+                }
+                //city data
+                x.innerHTML = city.long_name;
+                x1.innerHTML = "Movies in your city";
+
+                //alert('re');
+                str = city.long_name;
+                show(str);
+            }
+            else {
+                alert("No results found");
+            }
+        }
+        else {
+            alert("Geocoder failed due to: " + status);
+        }
+    });
+}
+
+function show(str) {
+    var xmlhttp;
+
+    if (window.XMLHttpRequest) {
+        // code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp=new XMLHttpRequest();
+    }
+    else {
+        // code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+
+    xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+            //alert("simran");
+            //document.getElementById("trigger").innerHTML=xmlhttp.responseText;
+            jsonResponse = xmlhttp.responseText;
+            //alert(jsonResponse)
+            json = JSON.parse(jsonResponse);
+            var objJSON = eval("(function(){return " + jsonResponse + ";})()");
+            var child = document.getElementsByClassName("table-row");
+            var parent = document.getElementById("movie_listing");
+
+            //var parent = child.parentNode;
+            //alert(parent.className);
+
+            var header;
+            while (parent.firstChild) {
+                parent.removeChild(parent.firstChild);
+            }
+
+
+            var node = document.createElement("div");
+            node.setAttribute("class","heading");
+
+            var head = ['Theater','Movie','Genre','Venue','Timing','Date']
+
+            for(var i=0; i<6;i++){
+                td = document.createElement("div");
+                td.setAttribute("class","col");
+                td.innerHTML = head[i]
+                node.appendChild(td);
+            }
+
+            parent.appendChild(node);
+
+            var node,td;
+
+            for(key in objJSON){
+                node = document.createElement("div");
+                node.setAttribute("class","table-row");
+
+                for(k in objJSON[key]){
+                    //console.log(k)
+                    if(k=="city")continue;
+                    td = document.createElement("div");
+                    td.setAttribute("class","col");
+                    td.innerHTML = objJSON[key][k]
+                    node.appendChild(td);
+                }
+
+                parent.appendChild(node);
+
+            }
+
+        }
+    }
+
+    xmlhttp.open("GET","http://3412768d.ngrok.com/api/movies?city="+str+"&format=json",true);
+    xmlhttp.send();
+}
 
 </script>
 

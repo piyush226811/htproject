@@ -17,13 +17,23 @@ class EventList(generics.ListAPIView):
     def get_queryset(self):
         queryset = Event.objects.all()
         city = self.request.QUERY_PARAMS.get('city',None)
-        category = self.request.QUERY_PARAMS.get('category',None)
+        categories_string = self.request.QUERY_PARAMS.get('category',None)
 
-        if city is not None:
+
+
+        if city is not None and city !="None":
             queryset = Event.objects.filter(city=city)
+        else:
+            queryset = Event.objects.all()
 
-        if category is not None:
-            queryset = Event.objects.filter(category=category)
+        if categories_string is None or categories_string == "None":
+            return queryset;
+        else:
+            categories = categories_string.split(",");
+
+
+        if categories is not None or categories[0] != "None":
+            queryset = queryset.filter(category__in=categories)
 
         return queryset
 
@@ -92,11 +102,15 @@ class MovieList(generics.ListAPIView):
         queryset = Movie.objects.all()
         theater = self.request.QUERY_PARAMS.get('theater',None)
         title = self.request.QUERY_PARAMS.get('title',None)
+        city = self.request.QUERY_PARAMS.get('city',None)
 
         if title is not None:
             queryset = Movie.objects.filter(title=title)
 
         if theater is not None:
             queryset = Movie.objects.filter(theater=theater)
+
+        if city is not None:
+            queryset = Movie.objects.filter(city=city)
 
         return queryset

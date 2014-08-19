@@ -102,7 +102,14 @@ CRON_CLASSES = [
     "app.api_eventbrite.EventbriteApi",
     "app.api_eventful.EventfulApi",
     "app.api_meetup.MeetupApi",
+    "app.movie.MoviesApi",
+    "app.flush_movie.FlushMovie"
 ]
+
+CELERY_ROUTES = {
+    "app.tasks.email_24" : {"queue": "email_24"},
+    "app.tasks.email_1" : {"queue": "email_1"}
+}
 
 HAYSTACK_CONNECTIONS = {
     'default': {

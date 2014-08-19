@@ -81,6 +81,7 @@ def bookmark_get(request,fbid):
     user = User.objects.get(fbid = fbid);
     fbid=int(fbid)
 
+    bookmark = None
     bookmark_check = False
     login_check = False
 
@@ -199,10 +200,17 @@ def home(request):
     login_check = False
     categories = (Event.objects.values('category')).distinct()
 
+    c_list = [];
+
+    for category in categories:
+        c_list.append(category['category']);
+
+
+
     if 'fbid' in request.session:
         login_check = True
 
-    return render_to_response('index.html', {'events': event, 'login':login_check, 'categories': categories, 'request': request})
+    return render_to_response('index.html', {'events': event, 'login':login_check, 'categories': c_list, 'request': request})
 
 def login(request, provider_name):
     # We we need the response object for the adapter.

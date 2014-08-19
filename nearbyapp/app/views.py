@@ -9,7 +9,7 @@ from django.shortcuts import redirect
 from django.http import HttpResponse
 from authomatic import Authomatic
 from authomatic.adapters import DjangoAdapter
-from api.models import User, Bookmark, Event, Movie
+from api.models import User, Bookmark, Event, Movie, Movie_bookmark
 
 from config import CONFIG
 
@@ -343,10 +343,181 @@ def movies(request):
     login_check = False
     theater=(Movie.objects.values('theater')).distinct()
     movies=(Movie.objects.values('title')).distinct()
+
+    subscribedTheatres = [];
+
     if 'fbid' in request.session:
         login_check = True
+        bookmark_obj = Movie_bookmark.objects.filter(user = request.session['fbid']);
 
-    return render_to_response('index2.html', {'movies': mov,'theaters': theater, "movietitle": movies, 'login':login_check, 'request': request})
+        for bookmark in bookmark_obj:
+            subscribedTheatres.append(bookmark.theater);
+
+    return render_to_response('index2.html', {'subscribedTheatres':subscribedTheatres, 'movies': mov,'theaters': theater, 'movietitle': movies, 'login':login_check, 'request': request})
+
+def theatre_bookmark_set(request, fbid, theater_name):
+
+    response = HttpResponse();
+    user = User.objects.get(fbid = fbid);
+    theater_obj = Movie.objects.get(theater = theater_name);
+
+    if Movie_bookmark.objects.filter(user = user.fbid, theater_obj = theater_name).count() > 0:
+        #response.write("Bookmark already exists")
+        return 1;
+
+    if 'fbid' in request.session:
+        if request.session['fbid'] == fbid:
+            #response.write("logged in");
+            pass;
+        else:
+            #response.write("wrong user");
+            return 1;
+    else:
+        #response.write("no login");
+        return 1;
+
+
+    bookmark = Movie_bookmark.objects.create(user=user,theater = theater_obj);
+    bookmark.theater_name = theater_obj.theater
+    bookmark.address = theater_obj.venue
+    bookmark.city = theater_obj.city
+
+    #bookmark.user = user.fbid;
+    #bookmark.event = eventid;
+    bookmark.save()
+
+    #response.write("bookmark saved for user = "+fbid+" event = "+eventid);
+
+    return response;
+
+def theatre_bookmark_unset(request, fbid, theater_name):
+
+    response = HttpResponse();
+    user = User.objects.get(fbid = fbid);
+    theater_obj = Movie.objects.get(theater = theater_name);
+
+
+    if 'fbid' in request.session:
+        if request.session['fbid'] == fbid:
+            #response.write("logged in");
+            pass;
+        else:
+            #response.write("wrong user");
+            return 1;
+    else:
+        #response.write("no login");
+        return 1;
+
+    bookmark = Movie_bookmark.objects.get(user=fbid,theater = theater_obj);
+    bookmark.delete()
+    #response.write("Bookmark already exists")
+    return response;
+
+def theatre_bookmark_get(request,fbid, theater_name):
+
+    user = User.objects.get(fbid = fbid);
+    fbid=int(fbid)
+
+    #response = HttpResponse();
+
+    if 'fbid' in request.session:
+        #response.write("logged in<br>");
+        #response.write(fbid);
+        pass;
+    else:
+        #response.write("no login");
+        return 1;
+
+    if fbid > 0:
+        if Movie_bookmark.objects.filter(user = user.id, theater = theater_name).count() > 0:
+            #response.write("check");
+            #response.write(user);
+            bookmark = movie_bookmark.objects.get(user = user.id, theater = theater_name);
+
+            #response.write(bookmark);
+            #response.write("<br>bookmark id = ");
+            #response.write(bookmark.id);
+        else:
+            #response.write("bookmark doesn't exist");
+            pass;
+
+
+    elif fbid == 0:
+        if Movie_ookmarks.objects.filter(theater = theater_name).count() > 0:
+
+            bookmark_obj = Movie_bookmark.objects.all().filter(theater = theater_name);
+
+            for bookmark in bookmark_obj:
+                pass
+                #response.write(bookmark);
+                #response.write("<br>bookmark id = ");
+                #response.write(bookmark.id);
+
+        else:
+            #response.write("bookmark events don't exist");
+            pass;
+
+
+    return 1;
+
+
+def friends_on_theater(fbid, theater_name):
+
+    response = HttpResponse();
+
+
+
+    user_obj = User.objects.get(fbid = fbid);
+
+    friendlist = user_obj.friendlist.split(",");
+    #friend_user = User.objects.all().filter(fbid = friendlist)
+
+    bookmark_obj = Movie_bookmark.objects.all().filter(user__in = friendlist, theater = theater_name);
+
+    return bookmark_obj;
+
+
+    for bookmark in bookmark_obj:
+        response.write("<img src='http://graph.facebook.com/"+str(bookmark.user.fbid)+"/picture?type=small'>");
+
+    #response.write(friendlist);
+    #return response;
+
+
+def theater_page(request, theater_name):
+
+    #response = HttpResponse();
+
+    theater_obj = Movie.objects.get(theater = theater_name)
+    bookmark_obj = ()
+    login_check = False
+    bookmark_check = False
+
+    c = {}
+    c.update(csrf(request))
+
+    if 'fbid' in request.session:
+        login_check = True
+        user = User.objects.get(fbid = request.session['fbid'])
+        fbid=int(request.session['fbid'])
+
+        #response.write("<br>logged in<br>");
+        if Movie_bookmark.objects.filter(user = user.fbid, theater = theater_name).count() > 0:
+            bookmark_obj = friends_on_theater(request.session['fbid'],theater_name)
+            bookmark_check = True
+        else:
+            bookmark_check = False
+
+        #data['bookmark_obj']=bookmark_obj
+
+
+        #for bookmark in bookmark_obj:
+            #response.write("Test+");
+            #response.write("<img src='http://graph.facebook.com/"+bookmark.user.fbid+"/picture?type=small'>");
+
+
+
+    return render_to_response('views/detail.html', {'bookmarks': bookmark_obj, 'event':event_obj, 'login':login_check, 'bookmark_check':bookmark_check, 'request': request, 'c':c});
 
 def logout(request,eventid):
 

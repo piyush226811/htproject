@@ -232,7 +232,7 @@ xmlhttp.onreadystatechange=function()
   }
 
 
-xmlhttp.open("POST","http://28f16765.ngrok.com/bookmarks/unset/{{request.session.fbid}}/{{ event.id }}/",true);
+xmlhttp.open("POST","http://3412768d.ngrok.com/bookmarks/unset/{{request.session.fbid}}/{{ event.id }}/",true);
 xmlhttp.setRequestHeader("X-CSRFToken", csrf_token);
 xmlhttp.send();
 }
@@ -262,7 +262,7 @@ xmlhttp.onreadystatechange=function()
   }
 
 
-xmlhttp.open("POST","http://28f16765.ngrok.com/bookmarks/set/{{ request.session.fbid }}/{{ event.id }}/",true);
+xmlhttp.open("POST","http://3412768d.ngrok.com/bookmarks/set/{{ request.session.fbid }}/{{ event.id }}/",true);
 xmlhttp.setRequestHeader("X-CSRFToken", csrf_token);
 xmlhttp.send();
 }

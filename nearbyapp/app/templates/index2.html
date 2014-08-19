@@ -13,7 +13,10 @@
     <meta name="author" content="Piyush" />
     <link rel="icon" type="image/png" href="favicon.png"/>
     <link href="{% static "css/stylesheets/b.css" %}" rel="stylesheet">
-    <link href="{% static "css/stylesheets/freecharge.css" %}" rel="stylesheet">
+    <link href="{% static "css/stylesheets/main.css" %}" rel="stylesheet">
+    <script>
+    var csrf_token = '{{ c.csrf_token }}';
+    </script>
 
 </head>
 
@@ -23,6 +26,15 @@
 .body{
 background: #F9F9F9;
 }
+
+.bookmarkButton{float:right; font-size:14px;border: rgb(233, 229, 236); border-style: solid;border-radius: 8px;padding: 3px;opacity: 0.9; cursor:pointer}
+.subscribe {
+  background: rgb(107, 184, 100);
+}
+.unSubscribe {
+  background:rgb(230, 121, 121);
+}
+
 h1{
 text-align:center;
 top:30px;
@@ -196,6 +208,8 @@ height:20px;
         Movies
 
     </div>
+    <div id="bookmarkButton" class="bookmarkButton subscribe">Bookmark this theatre</div>
+    </div>
     <div class="order by" style="padding:10px; padding-top:25px;">
 
             <span >Select theater :
@@ -268,8 +282,60 @@ height:20px;
 <script type="text/javascript" src="https://d2s1ih2yipot4l.cloudfront.net/content/js/singlepage/lib/bootstrap.3.0.3.min.js"></script>
 
 <script type="text/javascript">
- var urlmenu = document.getElementById( 'movie' );
- urlmenu.onchange = function() {
+
+var subscribedTheatres = [];
+  {% for item in subscribedTheatres %}
+  subscribedTheatres[] = {{ item }};
+  {% endfor %}
+
+  var bookmark_button = document.getElementById( 'bookmarkButton' );
+  bookmark_button.onclick = function() {
+
+  var elt = document.getElementById( 'theater' );
+  var theatre_name = elt.options[elt.selectedIndex].text;
+  //var fbid = 1;
+
+  //alert(theatre_name+" "+fbid);
+
+
+
+  if(bookmark_button.className == "bookmarkButton unSubscribe"){
+       bookmark_button.innerHTML = "Bookmark this theatre";
+       bookmark_button.className = "bookmarkButton subscribe";
+       url = "http://3412768d.ngrok.com/bookmark_movies/set/{{ request.session.fbid }}/"+theatre_name;
+  }
+  else
+  {
+     bookmark_button.innerHTML = "Remove bookmark";
+     bookmark_button.className = "bookmarkButton unSubscribe";
+     url = "http://3412768d.ngrok.com/bookmark_movies/unset/{{ request.session.fbid }}/"+theatre_name
+  }
+
+  var xmlhttp;
+      if (window.XMLHttpRequest)
+      {// code for IE7+, Firefox, Chrome, Opera, Safari
+          xmlhttp=new XMLHttpRequest();
+      }
+      else
+      {// code for IE6, IE5
+          xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+      }
+      xmlhttp.onreadystatechange=function()
+      {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200){
+
+          }
+      }
+      xmlhttp.open("GET",url,true);
+      xmlhttp.setRequestHeader("X-CSRFToken", csrf_token);
+      xmlhttp.send();
+
+
+}
+
+
+ var movie_select = document.getElementById( 'movie' );
+ movie_select.onchange = function() {
 
     //document.getElementById("theater").getElementsByTagName('option')[0].selected ='selected';
     document.getElementById("theater").value ='default';
@@ -358,8 +424,8 @@ height:20px;
  };
 
 
- var urlmenu = document.getElementById( 'theater' );
- urlmenu.onchange = function() {
+ var theatre_select = document.getElementById( 'theater' );
+ theatre_select.onchange = function() {
 
     document.getElementById("movie").value ='default';
 

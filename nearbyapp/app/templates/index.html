@@ -87,7 +87,7 @@
                         <h3 id="loc">Please share your location!</h3>
                     </div>
                     <div>
-                        <input type="text" onkeydown="if (event.keyCode == 13) searchCities()" id="city_name" name="city" size="21" maxlength="120"  placeholder="Search..." class="form-control integer parsley-validated" id="btnSearch">
+                        <input type="text" onkeydown="if (event.keyCode == 13) searchCities()" id="city_name" name="city" size="21" maxlength="120"  placeholder="Search by City..." class="form-control integer parsley-validated" id="btnSearch">
                     </div>
                     <div class="coupon-page-header-button">
                         <button onclick="getLocation()" class="btn btn-primary">Get Location</button>
@@ -370,7 +370,7 @@
             }
         }
 
-    xmlhttp.open("GET","http://127.0.0.1:8000/api/events?city="+str+"&format=json",true);
+    xmlhttp.open("GET","http://3412768d.ngrok.com/api/events?city="+str+"&format=json",true);
     xmlhttp.send();
 
     }

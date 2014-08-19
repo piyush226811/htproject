@@ -103,7 +103,7 @@ CRON_CLASSES = [
     "app.api_eventful.EventfulApi",
     "app.api_meetup.MeetupApi",
     "app.movie.MoviesApi",
-    "app.flush_movie.FlushMovie"
+    #"app.flush_movie.FlushMovie"
 ]
 
 CELERY_ROUTES = {

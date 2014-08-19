@@ -4,6 +4,7 @@
 
 from django.shortcuts import render_to_response
 from django.core.context_processors import csrf
+#from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import redirect
 
 from django.http import HttpResponse
@@ -337,8 +338,12 @@ def login(request, provider_name):
     #return response
     return redirect(home)
 
+
 def movies(request):
     # Create links and OpenID form to the Login handler.
+    d = {}
+    d.update(csrf(request))
+
     mov = Movie.objects.all()
     login_check = False
     theater=(Movie.objects.values('theater')).distinct()
@@ -353,15 +358,18 @@ def movies(request):
         for bookmark in bookmark_obj:
             subscribedTheatres.append(bookmark.theater);
 
-    return render_to_response('index2.html', {'subscribedTheatres':subscribedTheatres, 'movies': mov,'theaters': theater, 'movietitle': movies, 'login':login_check, 'request': request})
+    return render_to_response('index2.html', {'subscribedTheatres':subscribedTheatres, 'movies': mov,'theaters': theater, 'movietitle': movies, 'login':login_check, 'request': request, 'd':d})
 
 def theatre_bookmark_set(request, fbid, theater_name):
 
     response = HttpResponse();
     user = User.objects.get(fbid = fbid);
-    theater_obj = Movie.objects.get(theater = theater_name);
+    theater_obj = Movie.objects.filter(theater = theater_name)
+    theater_obj = theater_obj[0]
 
-    if Movie_bookmark.objects.filter(user = user.fbid, theater_obj = theater_name).count() > 0:
+    '''
+
+    if Movie_bookmark.objects.filter(user = user.fbid, theater = theater_name).count() > 0:
         #response.write("Bookmark already exists")
         return 1;
 
@@ -376,9 +384,9 @@ def theatre_bookmark_set(request, fbid, theater_name):
         #response.write("no login");
         return 1;
 
-
-    bookmark = Movie_bookmark.objects.create(user=user,theater = theater_obj);
-    bookmark.theater_name = theater_obj.theater
+        '''
+    bookmark = Movie_bookmark.objects.create(user=user,theater = theater_obj.theater);
+    #bookmark.theater_name = theater_obj.theater
     bookmark.address = theater_obj.venue
     bookmark.city = theater_obj.city
 
@@ -386,7 +394,7 @@ def theatre_bookmark_set(request, fbid, theater_name):
     #bookmark.event = eventid;
     bookmark.save()
 
-    #response.write("bookmark saved for user = "+fbid+" event = "+eventid);
+    #response.write("bookmark saved for user = "+fbid+" event = "+theater_obj.theater);
 
     return response;
 
@@ -394,7 +402,9 @@ def theatre_bookmark_unset(request, fbid, theater_name):
 
     response = HttpResponse();
     user = User.objects.get(fbid = fbid);
-    theater_obj = Movie.objects.get(theater = theater_name);
+    theater_obj = Movie.objects.filter(theater = theater_name);
+    theater = theater_obj[0].theater
+    response.write(theater)
 
 
     if 'fbid' in request.session:
@@ -408,7 +418,7 @@ def theatre_bookmark_unset(request, fbid, theater_name):
         #response.write("no login");
         return 1;
 
-    bookmark = Movie_bookmark.objects.get(user=fbid,theater = theater_obj);
+    bookmark = Movie_bookmark.objects.get(user=fbid,theater = theater)
     bookmark.delete()
     #response.write("Bookmark already exists")
     return response;
@@ -486,15 +496,15 @@ def friends_on_theater(fbid, theater_name):
 
 def theater_page(request, theater_name):
 
-    #response = HttpResponse();
+    response = HttpResponse();
 
     theater_obj = Movie.objects.get(theater = theater_name)
     bookmark_obj = ()
     login_check = False
     bookmark_check = False
 
-    c = {}
-    c.update(csrf(request))
+    d = {}
+    d.update(csrf(request))
 
     if 'fbid' in request.session:
         login_check = True
@@ -516,8 +526,9 @@ def theater_page(request, theater_name):
             #response.write("<img src='http://graph.facebook.com/"+bookmark.user.fbid+"/picture?type=small'>");
 
 
-
-    return render_to_response('views/detail.html', {'bookmarks': bookmark_obj, 'event':event_obj, 'login':login_check, 'bookmark_check':bookmark_check, 'request': request, 'c':c});
+    #response.write(d)
+    #return response
+    return render_to_response('views/detail.html', {'bookmarks': bookmark_obj, 'event':event_obj, 'login':login_check, 'bookmark_check':bookmark_check, 'request': request, 'd':d});
 
 def logout(request,eventid):
 

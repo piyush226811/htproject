@@ -15,7 +15,7 @@
     <link href="{% static "css/stylesheets/b.css" %}" rel="stylesheet">
     <link href="{% static "css/stylesheets/main.css" %}" rel="stylesheet">
     <script>
-    var csrf_token = '{{ c.csrf_token }}';
+    var csrf_token = '{{ d.csrf_token }}';
     </script>
 
 </head>
@@ -208,7 +208,11 @@ height:20px;
         Movies
 
     </div>
+    {% if login %}
     <div id="bookmarkButton" class="bookmarkButton subscribe">Bookmark this theatre</div>
+    {% else %}
+    <div class="bookmarkButton subscribe">Login to bookmark</div>
+    {% endif %}
     </div>
     <div class="order by" style="padding:10px; padding-top:25px;">
 
@@ -285,7 +289,7 @@ height:20px;
 
 var subscribedTheatres = [];
   {% for item in subscribedTheatres %}
-  subscribedTheatres[] = {{ item }};
+  subscribedTheatres.push("{{ item }}");
   {% endfor %}
 
   var bookmark_button = document.getElementById( 'bookmarkButton' );
@@ -299,17 +303,18 @@ var subscribedTheatres = [];
 
 
 
+
+
+
   if(bookmark_button.className == "bookmarkButton unSubscribe"){
-       bookmark_button.innerHTML = "Bookmark this theatre";
-       bookmark_button.className = "bookmarkButton subscribe";
-       url = "http://3412768d.ngrok.com/bookmark_movies/set/{{ request.session.fbid }}/"+theatre_name;
+       url = "http://3412768d.ngrok.com/bookmark_movies/unset/{{ request.session.fbid }}/"+theatre_name+"/";
   }
   else
   {
-     bookmark_button.innerHTML = "Remove bookmark";
-     bookmark_button.className = "bookmarkButton unSubscribe";
-     url = "http://3412768d.ngrok.com/bookmark_movies/unset/{{ request.session.fbid }}/"+theatre_name
+     url = "http://3412768d.ngrok.com/bookmark_movies/set/{{ request.session.fbid }}/"+theatre_name+"/";
   }
+
+  //alert(theatre_name);
 
   var xmlhttp;
       if (window.XMLHttpRequest)
@@ -323,10 +328,22 @@ var subscribedTheatres = [];
       xmlhttp.onreadystatechange=function()
       {
         if (xmlhttp.readyState==4 && xmlhttp.status==200){
+            if(bookmark_button.className == "bookmarkButton unSubscribe"){
+                 bookmark_button.innerHTML = "Bookmark this theatre";
+                 bookmark_button.className = "bookmarkButton subscribe";
+                 //url = "http://3412768d.ngrok.com/bookmark_movies/unset/{{ request.session.fbid }}/"+theatre_name+"/";
+              }
+              else
+              {
+                 bookmark_button.innerHTML = "Remove bookmark";
+                 bookmark_button.className = "bookmarkButton unSubscribe";
+                 //url = "http://3412768d.ngrok.com/bookmark_movies/set/{{ request.session.fbid }}/"+theatre_name+"/";
+              }
 
           }
       }
-      xmlhttp.open("GET",url,true);
+      xmlhttp.open("POST",url,true);
+      //alert(csrf_token);
       xmlhttp.setRequestHeader("X-CSRFToken", csrf_token);
       xmlhttp.send();
 
@@ -426,6 +443,19 @@ var subscribedTheatres = [];
 
  var theatre_select = document.getElementById( 'theater' );
  theatre_select.onchange = function() {
+
+    var theatre_name = theatre_select.options[theatre_select.selectedIndex].text;
+    var bookmark_button = document.getElementById( 'bookmarkButton' );
+
+    if(subscribedTheatres.indexOf(theatre_name) > 0){
+      //alert("Hi");
+      bookmark_button.innerHTML = "Remove bookmark";
+      bookmark_button.className = "bookmarkButton unSubscribe";
+    }
+    else{
+      bookmark_button.innerHTML = "Bookmark this theatre";
+      bookmark_button.className = "bookmarkButton subscribe";
+    }
 
     document.getElementById("movie").value ='default';
 

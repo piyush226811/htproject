@@ -27,4 +27,4 @@ class BookmarkSerializer(serializers.ModelSerializer):
 class MovieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
-        fields = ('theater', 'title', 'category', 'venue', 'city', 'timing', 'date')
+        fields = ('id','theater', 'title', 'category', 'venue', 'city', 'timing', 'date')

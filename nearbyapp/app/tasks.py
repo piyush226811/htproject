@@ -17,10 +17,10 @@ def mul(x, y):
 @shared_task
 def email_24(mail_list_d):
 
-	mail_string = mail_list_h['mail_list'];
+	mail_string = mail_list_d['mail_list'];
 	#mail_list = mail_string.split(",");
 
-	send_mail('event reminder', 'your event '+mail_list_h['name']+' starts in 1 hour', 'from@example.com',[mail_string], fail_silently=False)
+	send_mail('event reminder', 'your event '+mail_list_d['name']+' starts in 24 hour', 'from@example.com',[mail_string], fail_silently=False)
 
 	return mail_list_d;
 

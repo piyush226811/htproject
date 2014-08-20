@@ -196,7 +196,7 @@ def event_page(request, eventid):
 
 def home(request):
     # Create links and OpenID form to the Login handler.
-    event = Event.objects.all()
+    event = Event.objects.all().order_by('event_date','event_time')
     login_check = False
     categories = (Event.objects.values('category')).distinct()
 
@@ -352,7 +352,7 @@ def movies(request):
     d = {}
     d.update(csrf(request))
 
-    mov = Movie.objects.all()
+    mov = Movie.objects.all().order_by('theater')
     login_check = False
     theater=(Movie.objects.values('theater')).distinct()
     movies=(Movie.objects.values('title')).distinct()

@@ -98,11 +98,11 @@ STATICFILES_DIRS = (
 )
 
 CRON_CLASSES = [
-    "app.cron.MyCronJob",
+    #"app.cron.MyCronJob",
     "app.api_eventbrite.EventbriteApi",
     "app.api_eventful.EventfulApi",
-    "app.api_meetup.MeetupApi",
-    "app.movie.MoviesApi",
+    #"app.api_meetup.MeetupApi",
+    #"app.movie.MoviesApi",
     #"app.flush_movie.FlushMovie"
 ]
 

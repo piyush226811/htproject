@@ -43,7 +43,7 @@ for e in events['events']:
 
 		event.eventid = e["event"]['id']
 		event.title = e['event']['title']
-		event.description = remove_html_markup(e['event']['description'])
+		event.description = (remove_html_markup(e['event']['description'])).encode('unicode_escape')
 		event.organizer = e["event"]["organizer"]["name"]
 		event.venue = e["event"]["venue"]['name'] + e["event"]["venue"]['address_2'] + e["event"]["venue"]['address'] + e["event"]["venue"]['city'] +e["event"]["venue"]['region'] + e["event"]["venue"]['postal_code']
 		if e["event"].get('category'):

@@ -38,5 +38,6 @@ urlpatterns = patterns('',
     url(r'^events/(?P<eventid>\w+)', 'app.views.event_page'),
     url(r'^bookmark_movies/set/(?P<fbid>\w+)/(?P<theater_name>[^/]+)/', 'app.views.theatre_bookmark_set'),
     url(r'^bookmark_movies/unset/(?P<fbid>\w+)/(?P<theater_name>[^/]+)/', 'app.views.theatre_bookmark_unset'),
-    #url(r'^search/', include('haystack.urls')),
+    #url(r'^search/$', FacetedSearchView(searchqueryset=sqs), name='haystack_search'),
+
 )

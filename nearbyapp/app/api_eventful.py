@@ -35,7 +35,7 @@ class EventfulApi(CronJobBase):
             return out
 
     def do(self):
-        
+
         cityname=City.objects.all()
         #print cityname
         for city in cityname:
@@ -49,35 +49,41 @@ class EventfulApi(CronJobBase):
                 events = api.call('/events/search', l=location,page_size=(events['total_items']))
                 #print events
                 for e in events['events']['event']:
-                	(event, created) = Event.objects.get_or_create(eventid=e['id'])
-                	if not created: continue
+                    (event, created) = Event.objects.get_or_create(eventid=e['id'])
+                    if not created: continue
 
-                	print 'Processing event: "%s"' % e['title']
+                    print 'Processing event: "%s"' % e['title']
 
-                	event.eventid = e['id']
-                	event.title = e['title']
-                	event.description = self.remove_html_markup(e['description'])
-                	event.organizer = e['owner']
-                	if e.get('venue_address'):
-                		event.venue = e['venue_address']
-                	else:
-                		event.venue = 'None'
+                    event.eventid = e['id']
+                    event.title = e['title']
+                    if e.get('description'):
+                        event.description = self.remove_html_markup(e['description'])
+                    else:
+                        event.description = 'None'
+                    event.organizer = e['owner']
+                    if e.get('venue_address'):
+                    	event.venue = e['venue_address']
+                    else:
+                    	event.venue = 'None'
 
-                	event.category = 'None'
+                    event.category = 'None'
 
-                	if e.get('image'):
-                		event.image = e['image']['url']
-                	else:
-                		event.image = 'None'
+                    if e.get('image') and e['image'].get('url'):
+                        event.image = e['image']['url']
+                    else:
+                        event.image = 'None'
 
-                	event.latitude = e['latitude']
-                	event.longitude = e['longitude']
-                	event.city = e['city_name']
-                	event.api_vendor = 'Eventful'
-                	event.event_url = e['url']
+                    if e.get('latitude'):
+                        event.latitude = e['latitude']
+                    else:
+                        event.latitude = 'None'
+                    event.longitude = e['longitude']
+                    event.city = e['city_name']
+                    event.api_vendor = 'Eventful'
+                    event.event_url = e['url']
 
-                	datetime = e['start_time'].split(' ')
-                	event.event_date = datetime[0]
-                	event.event_time = datetime[1]
+                    datetime = e['start_time'].split(' ')
+                    event.event_date = datetime[0]
+                    event.event_time = datetime[1]
 
-                	event.save()
+                    event.save()

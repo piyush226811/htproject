@@ -214,7 +214,7 @@ height:20px;
     {% if login %}
     <div id="bookmarkButton" class="bookmarkButton subscribe">Bookmark this theatre</div>
     {% else %}
-    <div class="bookmarkButton subscribe">Login to bookmark</div>
+    <div id="bookmarkButton" class="bookmarkButton subscribe">Login to bookmark</div>
     {% endif %}
     </div>
     <div class="order by" style="padding:10px; padding-top:25px;">
@@ -242,30 +242,7 @@ height:20px;
     <div class="panel-body">
       <div class="row show-list">
         <div class="container" id="movie_listing">
-            <div class="heading">
-                <div class="col">Theater</div>
-                <div class="col">Movie</div>
-                <div class="col">Gener</div>
-                <div class="col">venue</div>
-                <div class="col">City</div>
-                <div class="col">Date</div>
-                <div class="col">timing</div>
-            </div>
-        {% for movie in movies %}
 
-            <div class="table-row">
-                 <div class="col">{{movie.theater}}</div>
-                 <div class="col">{{movie.title}}</div>
-                 <div class="col">{{movie.category}}</div>
-                <div class="col">{{movie.venue}}</div>
-                 <div class="col">{{movie.city}}</div>
-                 <div class="col">{{movie.date}}</div>
-                 <div class="col">{{movie.timing}}</div>
-           </div>
-
-
-
-        {% endfor %}
         </div>
       </div>
     </div>
@@ -291,17 +268,107 @@ height:20px;
 
 <script type="text/javascript">
 
+var subscribedTheatres = [];
+{% for item in subscribedTheatres %}
+    subscribedTheatres.push("{{ item }}");
+{% endfor %}
+
+
+
+var movies=[];
+{% for movie in movies %}
+var movie=[];
+   movie[0]='{{movie.theater}}';
+   movie[1]='{{movie.title}}';
+   movie[2]='{{movie.category}}';
+   movie[3]='{{movie.venue}}';
+   movie[4]='{{movie.city}}';
+   movie[5]='{{movie.date}}';
+   movie[6]='{{movie.timing}}';
+
+movies.push(movie);
+{% endfor %}
+
+(function(){
+
+
+        var header;
+        var parent = document.getElementById("movie_listing");
+
+            while (parent.firstChild) {
+                parent.removeChild(parent.firstChild);
+            }
+
+            var node = document.createElement("div");
+            node.setAttribute("class","heading");
+
+{%if login %}
+
+            for(var i=0; i<7;i++){
+                td = document.createElement("div");
+                td.setAttribute("class","col");
+                td.innerHTML = " &nbsp;"
+                node.appendChild(td);
+            }
+
+            parent.appendChild(node);
+            //alert();
+{% endif %}
+
+            var node,td;
+            flag =0;
+
+            for(i=0; i<movies.length;i++){
+
+                node = document.createElement("div");
+                node.setAttribute("class","table-row");
+
+                for(j=0; j<7;j++){
+                    //console.log(k)
+
+                    if(j==0&&subscribedTheatres.indexOf(movies[i][j])>-1){
+                        flag =1;
+                    }
+
+                    td = document.createElement("div");
+                    td.setAttribute("class","col");
+                    td.innerHTML = movies[i][j]
+                    node.appendChild(td);
+                    }
+
+                if(flag){
+                    if(parent.firstChild) parent.insertBefore(node,parent.firstChild);
+                    else parent.appendChild(node);
+                    flag=0;
+                }
+                else parent.appendChild(node);
+
+                }
+
+            var node = document.createElement("div");
+            node.setAttribute("class","heading");
+
+            var head = ['Theater','Title','Genre','Venue','City','Timing','Date']
+
+            for(var i=0; i<7;i++){
+                td = document.createElement("div");
+                td.setAttribute("class","col");
+                td.innerHTML = head[i]
+                node.appendChild(td);
+            }
+
+            if(parent.firstChild) parent.insertBefore(node,parent.firstChild);
+            else parent.appendChild(node);
+})();
+
+
+
+
 function searchCities(){
     //alert();
     city_name = document.getElementById("city_name").value
     show(city_name);
 }
-
-var subscribedTheatres = [];
-
-{% for item in subscribedTheatres %}
-    subscribedTheatres.push("{{ item }}");
-{% endfor %}
 
 var bookmark_button = document.getElementById( 'bookmarkButton' );
 bookmark_button.onclick = function() {
@@ -400,7 +467,7 @@ movie_select.onchange = function() {
             for(var i=0; i<6;i++){
                 td = document.createElement("div");
                 td.setAttribute("class","col");
-                td.innerHTML = head[i]
+                td.innerHTML =" &nbsp;"
                 node.appendChild(td);
 
             }
@@ -410,6 +477,7 @@ movie_select.onchange = function() {
 
 
             var node,td;
+            var flag =0;
 
             for(key in objJSON){
 
@@ -419,15 +487,44 @@ movie_select.onchange = function() {
                 for(k in objJSON[key]){
                     //console.log(k)
 
+                    if(k=="theater"){
+
+                        if(subscribedTheatres.indexOf(objJSON[key][k])>-1){
+                            flag =1;
+                            //alert(objJSON[key][k]);
+                        }
+                    }
                     if(k=="title")continue;
+
                     td = document.createElement("div");
                     td.setAttribute("class","col");
                     td.innerHTML = objJSON[key][k]
                     node.appendChild(td);
                 }
-
-                parent.appendChild(node);
+            if(flag){
+                if(parent.firstChild ) parent.insertBefore(node,parent.firstChild);
+                else parent.appendChild(node);
+                flag = 0;
             }
+            else parent.appendChild(node);
+
+            }
+        var node = document.createElement("div");
+        node.setAttribute("class","heading");
+
+        var head = ['Theater','Genre','Venue','City','Timing','Date']
+
+        for(var i=0; i<6;i++){
+            td = document.createElement("div");
+            td.setAttribute("class","col");
+            td.innerHTML = head[i]
+            node.appendChild(td);
+
+        }
+
+        if(parent.firstChild ) parent.insertBefore(node,parent.firstChild);
+        else parent.appendChild(node);
+
         }
     }
 
@@ -441,6 +538,8 @@ var theatre_select = document.getElementById( 'theater' );
 theatre_select.onchange = function() {
 
     var theatre_name = theatre_select.options[theatre_select.selectedIndex].text;
+
+    {% if login %}
     var bookmark_button = document.getElementById( 'bookmarkButton' );
 
     if(subscribedTheatres.indexOf(theatre_name) > -1) {
@@ -452,6 +551,8 @@ theatre_select.onchange = function() {
         bookmark_button.innerHTML = "Bookmark this theatre";
         bookmark_button.className = "bookmarkButton subscribe";
     }
+
+    {% endif %}
 
     document.getElementById("movie").value ='default';
 
